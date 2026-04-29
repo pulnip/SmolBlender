@@ -15,8 +15,11 @@ namespace Smol
 		BlendStateRAII blendState = nullptr;
 
 	public:
+		D3D11GraphicsPipelineState();
 		D3D11GraphicsPipelineState(Device&, const GraphicsPipelineConfig&);
 		~D3D11GraphicsPipelineState() = default;
+
+		DECLARE_MOVE_ONLY(D3D11GraphicsPipelineState)
 
 		void bind(DeviceContext&) const;
 	};

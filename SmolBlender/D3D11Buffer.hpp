@@ -19,6 +19,8 @@ namespace Smol
 		D3D11Buffer(Device&, DeviceContext&, const BufferConfig&, const std::string& name);
 		~D3D11Buffer() = default;
 
+		DECLARE_MOVE_ONLY(D3D11Buffer)
+
 		void upload(const void* src, u32 dataSize, u32 offset = 0);
 		void download(void* dst, u32 destSize, u32 offset = 0);
 

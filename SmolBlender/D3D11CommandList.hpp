@@ -46,6 +46,9 @@ namespace Smol
 	public:
 		D3D11CommandList(Device&, DeviceContext& ctx)
 			: context(ctx) {}
+		~D3D11CommandList() = default;
+
+		DECLARE_PINNED(D3D11CommandList)
 
 		void begin() {
 			assert(!isRecording && "Did you call CommandList::close()?");

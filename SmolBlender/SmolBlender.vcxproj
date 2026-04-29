@@ -133,7 +133,6 @@
     <ClCompile Include="D3D11Texture.cpp" />
     <ClCompile Include="EditorMainLoop.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="main_later.cpp" />
     <ClCompile Include="OS.cpp" />
   </ItemGroup>
   <ItemGroup>

@@ -3,6 +3,48 @@
 #include <cstdint>
 #include <type_traits>
 
+// copy - move semantics
+#define DECLARE_DEFAULT_COPYABLE(Type) \
+    Type(const Type&) = default; \
+    Type& operator=(const Type&) = default;
+#define DECLARE_DEFAULT_COPYABLE_NOEXCEPT(Type) \
+    Type(const Type&) noexcept = default; \
+    Type& operator=(const Type&) noexcept = default;
+#define DECLARE_DEFAULT_MOVABLE(Type) \
+    Type(Type&&) = default; \
+    Type& operator=(Type&&) = default;
+#define DECLARE_DEFAULT_MOVABLE_NOEXCEPT(Type) \
+    Type(Type&&) noexcept = default; \
+    Type& operator=(Type&&) noexcept = default;
+#define DECLARE_NON_COPYABLE(Type) \
+    Type(const Type&) = delete; \
+    Type& operator=(const Type&) = delete;
+#define DECLARE_NON_MOVABLE(Type) \
+    Type(Type&&) = delete; \
+    Type& operator=(Type&&) = delete;
+
+#define DECLARE_PINNED(Type) \
+    DECLARE_NON_COPYABLE(Type) \
+    DECLARE_NON_MOVABLE(Type)
+#define DECLARE_COPY_ONLY(Type) \
+    DECLARE_DEFAULT_COPYABLE(Type) \
+    DECLARE_NON_MOVABLE(Type)
+#define DECLARE_COPY_ONLY_NOEXCEPT(Type) \
+    DECLARE_DEFAULT_COPYABLE_NOEXCEPT(Type) \
+    DECLARE_NON_MOVABLE(Type)
+#define DECLARE_MOVE_ONLY(Type) \
+    DECLARE_NON_COPYABLE(Type) \
+    DECLARE_DEFAULT_MOVABLE(Type)
+#define DECLARE_MOVE_ONLY_NOEXCEPT(Type) \
+    DECLARE_NON_COPYABLE(Type) \
+    DECLARE_DEFAULT_MOVABLE_NOEXCEPT(Type)
+#define DECLARE_TRANSFERABLE(Type) \
+    DECLARE_DEFAULT_COPYABLE(Type) \
+    DECLARE_DEFAULT_MOVABLE(Type)
+#define DECLARE_TRANSFERABLE_NOEXCEPT(Type) \
+    DECLARE_DEFAULT_COPYABLE_NOEXCEPT(Type) \
+    DECLARE_DEFAULT_MOVABLE_NOEXCEPT(Type)
+
 namespace Smol
 {
 	using i8 = int8_t;

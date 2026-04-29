@@ -21,6 +21,9 @@ namespace Smol
 	public:
 		D3D11Swapchain(Device&, Factory&, const SwapchainConfig&);
 		~D3D11Swapchain() = default;
+
+		DECLARE_MOVE_ONLY(D3D11Swapchain)
+
 		void present();
 
 		void resize(uint32_t newWidth, uint32_t newHeight);

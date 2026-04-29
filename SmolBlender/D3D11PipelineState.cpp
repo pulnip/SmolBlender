@@ -80,6 +80,8 @@ namespace Smol
 		}
 	};
 
+	D3D11GraphicsPipelineState::D3D11GraphicsPipelineState() {}
+
 	D3D11GraphicsPipelineState::D3D11GraphicsPipelineState(
 		Device& device,
 		const GraphicsPipelineConfig& cfg

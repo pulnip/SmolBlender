@@ -16,7 +16,7 @@ namespace Smol
 	class OS {
 	private:
 		HWND hwnd = nullptr;
-		int width, height;
+		u32 width, height;
 
 		MainLoop* mainLoop = nullptr;
 		bool forceQuit = false;
@@ -36,8 +36,8 @@ namespace Smol
 		inline static OS& singleton(){ return *instance; }
 
 		HWND getWindow() const { return hwnd; }
-		int getWidth() const { return width; }
-		int getHeight() const {	return height; }
+		u32 getWidth() const { return width; }
+		u32 getHeight() const {	return height; }
 
 		void setMainLoop(MainLoop* mainLoop) { this->mainLoop = mainLoop; }
 

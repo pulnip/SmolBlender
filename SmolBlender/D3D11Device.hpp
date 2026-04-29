@@ -19,6 +19,8 @@ namespace Smol
 	public:
 		D3D11Device();
 		~D3D11Device() = default;
+		
+		DECLARE_MOVE_ONLY(D3D11Device)
 
 		D3D11CommandList createCommandList();
 		D3D11Swapchain createSwapchain(const SwapchainConfig&);

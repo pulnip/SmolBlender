@@ -99,12 +99,7 @@ namespace Smol
 
 	void OS::processEvents() {
 		MSG msg{};
-		while (WM_QUIT != msg.message) {
-			if (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
-			}
-
+		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			switch (msg.message) {
 			case WM_CLOSE:
 				PostQuitMessage(0);
@@ -113,6 +108,9 @@ namespace Smol
 				forceQuit = true;
 				break;
 			}
+
+			TranslateMessage(&msg);
+			DispatchMessage(&msg);
 		}
 	}
 }

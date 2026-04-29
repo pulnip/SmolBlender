@@ -22,6 +22,8 @@ namespace Smol
 		D3D11Texture(Device&, DeviceContext&, const TextureConfig&, const std::string& name);
 		~D3D11Texture() = default;
 
+		DECLARE_MOVE_ONLY(D3D11Texture)
+
 		Texture* get() const { return texture.Get(); }
 		SRV* getSRV() const { return srv.Get(); }
 		RTV* getRTV() const { return rtv.Get(); }
