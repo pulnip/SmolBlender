@@ -83,11 +83,9 @@ namespace Smol
 	D3D11GraphicsPipelineState::D3D11GraphicsPipelineState(
 		Device& device,
 		const GraphicsPipelineConfig& cfg
-	)
-		: primitiveTopology(cfg.primitiveTopology)
-	{
+	){
 		auto vsBytecode = CompiledShader(cfg.vertexShaderPath, cfg.vertexShaderEntryPoint, "vs_5_0");
-		if(FAILED(device.CreateVertexShader(
+		if (FAILED(device.CreateVertexShader(
 			vsBytecode.getBytecode(),
 			vsBytecode.getBytecodeLength(),
 			nullptr,
@@ -96,14 +94,20 @@ namespace Smol
 			throw std::runtime_error("Failed to create vertex shader");
 		}
 
-		if(FAILED(device.CreateInputLayout(
-			cfg.inputElementDescs.data(),
-			static_cast<UINT>(cfg.inputElementDescs.size()),
-			vsBytecode.getBytecode(),
-			vsBytecode.getBytecodeLength(),
-			&inputLayout
-		))) {
-			throw std::runtime_error("Failed to create input layout");
+		if (cfg.inputElementDescs.has_value()) {
+			const auto& inputElementDescs = cfg.inputElementDescs.value();
+
+			if (FAILED(device.CreateInputLayout(
+				inputElementDescs.data(),
+				static_cast<UINT>(inputElementDescs.size()),
+				vsBytecode.getBytecode(),
+				vsBytecode.getBytecodeLength(),
+				&inputLayout
+			))) {
+				throw std::runtime_error("Failed to create input layout");
+			}
+
+			primitiveTopology = cfg.primitiveTopology;
 		}
 
 		if(FAILED(device.CreateRasterizerState(
@@ -124,31 +128,46 @@ namespace Smol
 		}
 
 		if(cfg.depthStencilState.has_value()) {
+			const auto& depthStencilStateDesc = cfg.depthStencilState.value();
+
 			if(FAILED(device.CreateDepthStencilState(
-				&cfg.depthStencilState.value(),
+				&depthStencilStateDesc,
 				&depthStencilState
 			))) {
 				throw std::runtime_error("Failed to create depth stencil state");
 			}
 		}
 
-		if(FAILED(device.CreateBlendState(
-			&cfg.blendState,
-			&blendState
-		))) {
-			throw std::runtime_error("Failed to create blend state");
-		}
+		if (cfg.blendState.has_value()) {
+			const auto& blendStateDesc = cfg.blendState.value();
+
+			if (FAILED(device.CreateBlendState(
+				&blendStateDesc,
+				&blendState
+			))) {
+				throw std::runtime_error("Failed to create blend state");
+			}
+		}	
 	}
 
 	void D3D11GraphicsPipelineState::bind(DeviceContext& context) const {
-		context.IASetInputLayout(inputLayout.Get());
-		context.IASetPrimitiveTopology(primitiveTopology);
+		// (optional) Input Assembler
+		if (inputLayout != nullptr) {
+			context.IASetInputLayout(inputLayout.Get());
+			context.IASetPrimitiveTopology(primitiveTopology);
+		}
+
+		// (necessary) Vertex Shader - Rasterizer State - Pixel Shader
 		context.VSSetShader(vertexShader.Get(), nullptr, 0);
 		context.RSSetState(rasterizerState.Get());
 		context.PSSetShader(pixelShader.Get(), nullptr, 0);
+
+		// (optional) Output Merger
 		if (depthStencilState != nullptr) {
 			context.OMSetDepthStencilState(depthStencilState.Get(), 0);
 		}
-		context.OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+		if (blendState != nullptr) {
+			context.OMSetBlendState(blendState.Get(), nullptr, 0xFFFFFFFF);
+		}
 	}
 }

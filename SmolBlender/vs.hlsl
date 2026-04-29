@@ -10,7 +10,6 @@ VertexOut vs_main(uint vertexID : SV_VertexID)
     {
         float2(0, 0.8), float2(-0.6, -0.8), float2(0.6, -0.8)
     };
-    // TL to BR convention
     static const float4 colors[3] =
     {
         float4(1, 0, 0, 1), float4(0, 1, 0, 1), float4(0, 0, 1, 1)

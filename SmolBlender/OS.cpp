@@ -17,30 +17,27 @@ static LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 
 namespace Smol
 {
-	OS* OS::instance = nullptr;
-
-	OS::OS(const WindowConfig& cfg)
-		: width(cfg.width), height(cfg.height)
-	{
+	HWND createMyWindow(const WindowConfig& cfg, bool immediateShow) {
 		WNDCLASSEX wc{
-			sizeof(WNDCLASSEX),
-			CS_CLASSDC,
-			MyWndProc,
-			0L, 0L,
-			GetModuleHandle(NULL),
-			nullptr,
-			nullptr,
-			nullptr,
-			nullptr,
-			L"SmolBlenderWindowClass", // lpszClassName
-			nullptr
+		sizeof(WNDCLASSEX),
+		CS_CLASSDC,
+		MyWndProc,
+		0L, 0L,
+		GetModuleHandle(NULL),
+		nullptr,
+		nullptr,
+		nullptr,
+		nullptr,
+		L"SmolBlenderWindowClass", // lpszClassName
+		nullptr
 		};
+
 		RegisterClassEx(&wc);
 
-		RECT rect{ 0, 0, width, height };
+		RECT rect{ 0, 0, static_cast<LONG>(cfg.width), static_cast<LONG>(cfg.height) };
 		AdjustWindowRect(&rect, WS_OVERLAPPEDWINDOW, FALSE);
 
-		hwnd = CreateWindow(
+		HWND hwnd = CreateWindow(
 			wc.lpszClassName,
 			cfg.title,
 			WS_OVERLAPPEDWINDOW,
@@ -51,11 +48,24 @@ namespace Smol
 			wc.hInstance,
 			nullptr
 		);
-
 		if (hwnd == nullptr) {
 			throw std::runtime_error("Failed to create window");
 		}
 
+		if (immediateShow) {
+			ShowWindow(hwnd, SW_SHOW);
+			UpdateWindow(hwnd);
+		}
+
+		return hwnd;
+	}
+
+	OS* OS::instance = nullptr;
+
+	OS::OS(const WindowConfig& cfg)
+		: hwnd(createMyWindow(cfg, false))
+		, width(cfg.width), height(cfg.height)
+	{
 		ShowWindow(hwnd, SW_SHOW);
 		UpdateWindow(hwnd);
 

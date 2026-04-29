@@ -277,7 +277,7 @@ namespace Smol
 		const ClearColor& clearColor,
 		const ClearDepthStencil& clearDepthStencil
 	) {
-		context.OMSetRenderTargets(rtvs.size(), rtvs.data(), dsv);
+		context.OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), dsv);
 
 		if (loadAction == LoadAction::Clear) {
 			for (size_t i = 0; i < rtvs.size(); ++i)

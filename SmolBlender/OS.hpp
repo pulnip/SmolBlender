@@ -8,8 +8,10 @@ namespace Smol
 {
 	struct WindowConfig {
 		const wchar_t* title;
-		int width = 800, height = 600;
+		u32 width = 800, height = 600;
 	};
+
+	HWND createMyWindow(const WindowConfig&, bool immediateShow = true);
 
 	class OS {
 	private:

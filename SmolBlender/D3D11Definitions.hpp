@@ -186,7 +186,7 @@ namespace Smol
 	};
 
 	struct GraphicsPipelineConfig {
-		std::span<const D3D11_INPUT_ELEMENT_DESC> inputElementDescs = DEFAULT_INPUT_LAYOUT;
+		std::optional<std::span<const D3D11_INPUT_ELEMENT_DESC>> inputElementDescs = std::nullopt;
 		D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
 		std::filesystem::path vertexShaderPath;
 		std::string vertexShaderEntryPoint = "vs_main";
@@ -194,7 +194,7 @@ namespace Smol
 		std::filesystem::path pixelShaderPath;
 		std::string pixelShaderEntryPoint = "ps_main";
 		std::optional<D3D11_DEPTH_STENCIL_DESC> depthStencilState = std::nullopt;
-		D3D11_BLEND_DESC blendState = DEFAULT_BLEND_DESC;
+		std::optional<D3D11_BLEND_DESC> blendState = std::nullopt;
 		DXGI_FORMAT renderTargetFormats[8] = { DXGI_FORMAT_R8G8B8A8_UNORM };
 		UINT numRenderTargets = 1;
 	};
