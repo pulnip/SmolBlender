@@ -106,9 +106,6 @@ namespace Smol
 		MSG msg{};
 		while (PeekMessage(&msg, nullptr, 0, 0, PM_REMOVE)) {
 			switch (msg.message) {
-			case WM_CLOSE:
-				PostQuitMessage(0);
-				break;
 			case WM_QUIT:
 				forceQuit = true;
 				break;
