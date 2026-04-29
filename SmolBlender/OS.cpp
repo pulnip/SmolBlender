@@ -62,14 +62,19 @@ namespace Smol
 
 	OS* OS::instance = nullptr;
 
-	OS::OS(const WindowConfig& cfg)
-		: hwnd(createMyWindow(cfg, false))
-		, width(cfg.width), height(cfg.height)
-	{
-		ShowWindow(hwnd, SW_SHOW);
-		UpdateWindow(hwnd);
+	OS::OS(const WindowConfig& cfg){
+		if (instance != nullptr) {
+			throw std::runtime_error("OS must be singleton object");
+		}
 
 		instance = this;
+
+		hwnd = createMyWindow(cfg, false);
+		width = cfg.width;
+		height = cfg.height;
+
+		ShowWindow(hwnd, SW_SHOW);
+		UpdateWindow(hwnd);
 	}
 
 	OS::~OS() {
