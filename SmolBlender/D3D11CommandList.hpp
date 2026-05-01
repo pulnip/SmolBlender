@@ -61,20 +61,20 @@ namespace Smol
 		}
 
 		void beginRenderPass(
-			std::span<const D3D11Texture*> rts,
-			const D3D11Texture* ds = nullptr,
-			LoadAction loadAction = LoadAction::Clear,
-			StoreAction storeAction = StoreAction::Store,
+			std::span<const D3D11Texture*> renderTargets,
+			const D3D11Texture* depthTarget = nullptr,
 			const ClearColor& clearColor = {},
-			const ClearDepthStencil& clearDepthStencil = {}
+			const ClearDepthStencil& clearDepthStencil = {},
+			LoadAction loadAction = LoadAction::Clear,
+			StoreAction storeAction = StoreAction::Store
 		);
 		void beginRenderPass(
 			const D3D11Swapchain&,
-			const D3D11Texture* ds = nullptr,
-			LoadAction loadAction = LoadAction::Load,
-			StoreAction storeAction = StoreAction::Store,
+			const D3D11Texture* depthTarget = nullptr,
 			const ClearColor& clearColor = {},
-			const ClearDepthStencil& clearDepthStencil = {}
+			const ClearDepthStencil& clearDepthStencil = {},
+			LoadAction loadAction = LoadAction::Load,
+			StoreAction storeAction = StoreAction::Store
 		);
 		void endRenderPass();
 
@@ -132,12 +132,12 @@ namespace Smol
 
 	private:
 		void beginRenderPass(
-			std::span<RTV*> rtvs,
-			DSV* dsv,
+			std::span<RTV*>,
+			DSV*,
+			const ClearColor&,
+			const ClearDepthStencil&,
 			LoadAction loadAction,
-			StoreAction storeAction,
-			const ClearColor& clearColor = {},
-			const ClearDepthStencil& clearDepthStencil = {}
+			StoreAction storeAction
 		);
 	};
 }

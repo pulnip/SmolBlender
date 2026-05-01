@@ -12,6 +12,7 @@ namespace Smol
 		const std::string& name
 	)
 		: context(context)
+		, size(cfg.size)
 	{
 		using enum BufferUsage;
 		using enum MemoryAccess;
@@ -19,13 +20,11 @@ namespace Smol
 		const auto hasVertexUsage = has_flag(cfg.usage, VertexBuffer);
 		const auto hasIndexUsage = has_flag(cfg.usage, IndexBuffer);
 		const auto hasConstantUsage = has_flag(cfg.usage, ConstantBuffer);
-		const auto needCPUAccess = hasVertexUsage || hasIndexUsage || hasConstantUsage || cfg.initialData != nullptr;
-
-		const auto isGPUOnly = has_flag(cfg.access, GPUOnly);
-		assert(!(isGPUOnly && needCPUAccess) && "GPU-only buffers cannot have CPU access or initial data");
-
 		const auto isShaderResource = has_flag(cfg.usage, AllowShaderRead);
 		const auto isUnorderedAccess = has_flag(cfg.usage, AllowShaderWrite);
+
+		const auto isCPUWrite = (cfg.access == CPUWrite);
+		const auto isCPURead = (cfg.access == CPURead);
 
 		UINT bindFlags = 0;
 		if (hasVertexUsage) bindFlags |= D3D11_BIND_VERTEX_BUFFER;
@@ -34,13 +33,16 @@ namespace Smol
 		if (isShaderResource) bindFlags |= D3D11_BIND_SHADER_RESOURCE;
 		if (isUnorderedAccess) bindFlags |= D3D11_BIND_UNORDERED_ACCESS;
 
+		// DYNAMIC+UAV is invalid in D3D11;
+		assert(!(isCPUWrite && isUnorderedAccess));
+
 		const D3D11_BUFFER_DESC desc = {
 			.ByteWidth = static_cast<UINT>(cfg.size),
-			.Usage = isGPUOnly ?
-				D3D11_USAGE_DEFAULT : D3D11_USAGE_DYNAMIC,
+			.Usage = isCPUWrite ?
+				D3D11_USAGE_DYNAMIC : D3D11_USAGE_DEFAULT,
 			.BindFlags = bindFlags,
-			.CPUAccessFlags = isGPUOnly ?
-				UINT(0) : D3D11_CPU_ACCESS_WRITE,
+			.CPUAccessFlags = isCPUWrite ?
+				D3D11_CPU_ACCESS_WRITE : UINT(0),
 			.MiscFlags = 0,
 			.StructureByteStride = 0
 		};
@@ -90,6 +92,21 @@ namespace Smol
 			};
 			device.CreateUnorderedAccessView(buffer.Get(), &uavDesc, &uav);
 		}
+
+		// Create a staging buffer for CPU readback when access == CPURead
+		if (isCPURead) {
+			D3D11_BUFFER_DESC stagingDesc{
+				.ByteWidth = static_cast<UINT>(cfg.size),
+				.Usage = D3D11_USAGE_STAGING,
+				.BindFlags = 0,
+				.CPUAccessFlags = D3D11_CPU_ACCESS_READ,
+				.MiscFlags = 0,
+				.StructureByteStride = 0
+			};
+			if (FAILED(device.CreateBuffer(&stagingDesc, nullptr, &stagingBuffer))) {
+				throw std::runtime_error("Failed to create staging buffer for readback");
+			}
+		}
 	}
 
 	void D3D11Buffer::upload(const void* src, u32 dataSize, u32 offset) {
@@ -102,13 +119,31 @@ namespace Smol
 		context.Unmap(buffer.Get(), 0);
 	}
 
-	void D3D11Buffer::download(void* dst, u32 destSize, u32 offset) {
-		assert(offset + destSize <= size && "Download range exceeds buffer size");
+	void D3D11Buffer::download(void* dst, u32 dstSize, u32 offset) {
+		assert(offset + dstSize <= size && "Download range exceeds buffer size");
+		assert(stagingBuffer && "requires MemoryAccess::CPURead");
+
+		// Copy GPU buffer ¡æ staging, then Map staging for CPU read
+		const D3D11_BOX srcBox{
+			.left = offset,
+			.top = 0,
+			.front = 0,
+			.right = offset + dstSize,
+			.bottom = 1,
+			.back = 1
+		};
+		context.CopySubresourceRegion(
+			stagingBuffer.Get(), 0,   // dst resource, dst subresource
+			0, 0, 0,                   // dst x, y, z.
+			buffer.Get(), 0,           // src resource, src subresource
+			&srcBox
+		);
+
 		D3D11_MAPPED_SUBRESOURCE mapped;
-		context.Map(buffer.Get(), 0, D3D11_MAP_READ, 0, &mapped);
+		context.Map(stagingBuffer.Get(), 0, D3D11_MAP_READ, 0, &mapped);
 	
-		std::memcpy(dst, static_cast<u8*>(mapped.pData) + offset, destSize);
+		std::memcpy(dst, mapped.pData, dstSize);
 	
-		context.Unmap(buffer.Get(), 0);
+		context.Unmap(stagingBuffer.Get(), 0);
 	}
 }

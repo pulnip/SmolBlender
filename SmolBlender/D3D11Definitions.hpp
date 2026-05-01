@@ -186,17 +186,20 @@ namespace Smol
 	};
 
 	struct GraphicsPipelineConfig {
+		// (optional) Input Assembler
 		std::optional<std::span<const D3D11_INPUT_ELEMENT_DESC>> inputElementDescs = std::nullopt;
+
 		D3D11_PRIMITIVE_TOPOLOGY primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST;
+		// Vertex Shader - Rasterizer State - Pixel Shader
 		std::filesystem::path vertexShaderPath;
 		std::string vertexShaderEntryPoint = "vs_main";
 		D3D11_RASTERIZER_DESC rasterizerState = DEFAULT_RASTERIZER_DESC;
 		std::filesystem::path pixelShaderPath;
 		std::string pixelShaderEntryPoint = "ps_main";
+
+		// (optional) Output Merger
 		std::optional<D3D11_DEPTH_STENCIL_DESC> depthStencilState = std::nullopt;
 		std::optional<D3D11_BLEND_DESC> blendState = std::nullopt;
-		DXGI_FORMAT renderTargetFormats[8] = { DXGI_FORMAT_R8G8B8A8_UNORM };
-		UINT numRenderTargets = 1;
 	};
 
 	enum class MemoryAccess : u8 {

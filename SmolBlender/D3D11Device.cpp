@@ -65,8 +65,6 @@ namespace Smol
 		))) {
 			throw std::runtime_error("Failed to create D3D11 Device");
 		}
-
-		device->GetImmediateContext(&context);
 	}
 
 	D3D11CommandList D3D11Device::createCommandList() {
@@ -93,7 +91,7 @@ namespace Smol
 		return D3D11Sampler(*device.Get(), cfg, name);
 	}
 
-	void D3D11Device::submit(D3D11CommandList& cmdList, D3D11Swapchain* swapchain) {
+	void D3D11Device::submit(D3D11CommandList&, D3D11Swapchain* swapchain) {
 		if (swapchain != nullptr) swapchain->present();
 	}
 }

@@ -3,7 +3,7 @@
 #include <d3dcompiler.h>
 #include "D3D11PipelineState.hpp"
 
-namespace Smol
+namespace
 {
 	std::vector<uint8_t> read_file_as_binary(const std::filesystem::path& path) {
 		std::ifstream file(path, std::ios::binary | std::ios::ate);
@@ -19,11 +19,8 @@ namespace Smol
 		return buffer;
 	}
 
-	using Blob = ID3DBlob;
-	using BlobRAII = RAII<Blob>;
-
 	struct CompiledShader {
-		std::vector<u8> bytecode;
+		std::vector<uint8_t> bytecode;
 
 		CompiledShader(
 			const std::filesystem::path& path,
@@ -35,7 +32,7 @@ namespace Smol
 			if (ext == ".cso" || ext == ".dxbc" || ext == ".dxil") {
 				bytecode = read_file_as_binary(path);
 			}
-			else if(ext != ".hlsl") {
+			else if (ext != ".hlsl") {
 				throw std::runtime_error("Unsupported shader file extension: " + ext);
 			}
 
@@ -43,7 +40,7 @@ namespace Smol
 #if defined(_DEBUG) || !defined(NDEBUG)
 			compileFlags |= D3DCOMPILE_DEBUG | D3DCOMPILE_SKIP_OPTIMIZATION;
 #endif
-			BlobRAII shaderBlob, errorBlob;
+			Microsoft::WRL::ComPtr<ID3DBlob> shaderBlob, errorBlob;
 
 			if (FAILED(D3DCompileFromFile(
 				path.c_str(),
@@ -79,13 +76,18 @@ namespace Smol
 			return bytecode.size();
 		}
 	};
+}
 
+namespace Smol
+{
 	D3D11GraphicsPipelineState::D3D11GraphicsPipelineState() {}
 
 	D3D11GraphicsPipelineState::D3D11GraphicsPipelineState(
 		Device& device,
 		const GraphicsPipelineConfig& cfg
-	){
+	)
+		: primitiveTopology(cfg.primitiveTopology)
+	{
 		auto vsBytecode = CompiledShader(cfg.vertexShaderPath, cfg.vertexShaderEntryPoint, "vs_5_0");
 		if (FAILED(device.CreateVertexShader(
 			vsBytecode.getBytecode(),
@@ -108,8 +110,6 @@ namespace Smol
 			))) {
 				throw std::runtime_error("Failed to create input layout");
 			}
-
-			primitiveTopology = cfg.primitiveTopology;
 		}
 
 		if(FAILED(device.CreateRasterizerState(
@@ -153,18 +153,15 @@ namespace Smol
 	}
 
 	void D3D11GraphicsPipelineState::bind(DeviceContext& context) const {
-		// (optional) Input Assembler
 		if (inputLayout != nullptr) {
 			context.IASetInputLayout(inputLayout.Get());
-			context.IASetPrimitiveTopology(primitiveTopology);
 		}
 
-		// (necessary) Vertex Shader - Rasterizer State - Pixel Shader
+		context.IASetPrimitiveTopology(primitiveTopology);
 		context.VSSetShader(vertexShader.Get(), nullptr, 0);
 		context.RSSetState(rasterizerState.Get());
 		context.PSSetShader(pixelShader.Get(), nullptr, 0);
 
-		// (optional) Output Merger
 		if (depthStencilState != nullptr) {
 			context.OMSetDepthStencilState(depthStencilState.Get(), 0);
 		}

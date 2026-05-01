@@ -8,6 +8,7 @@ namespace Smol
 	class D3D11Buffer {
 	private:
 		BufferRAII buffer = nullptr;
+		BufferRAII stagingBuffer = nullptr; // for CPURead download
 		u32 size = 0;
 
 		DeviceContext& context;

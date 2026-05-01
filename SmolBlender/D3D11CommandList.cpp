@@ -13,29 +13,29 @@
 namespace Smol
 {
 	void D3D11CommandList::beginRenderPass(
-		std::span<const D3D11Texture*> rts,
-		const D3D11Texture* ds,
-		LoadAction loadAction,
-		StoreAction storeAction,
+		std::span<const D3D11Texture*> renderTargets,
+		const D3D11Texture* depthTarget,
 		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil
+		const ClearDepthStencil& clearDepthStencil,
+		LoadAction loadAction,
+		StoreAction storeAction
 	) {
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
 
 		RTV* rtvs[8];
-		for (size_t i = 0; i < rts.size(); ++i)
-			rtvs[i] = rts[i]->getRTV();
+		for (size_t i = 0; i < renderTargets.size(); ++i)
+			rtvs[i] = renderTargets[i]->getRTV();
 
-		DSV* dsv = ds != nullptr ? ds->getDSV() : nullptr;
+		DSV* dsv = depthTarget != nullptr ? depthTarget->getDSV() : nullptr;
 
 		beginRenderPass(
 			rtvs,
 			dsv,
-			loadAction,
-			storeAction,
 			clearColor,
-			clearDepthStencil
+			clearDepthStencil,
+			loadAction,
+			storeAction
 		);
 
 		inRenderPass = true;
@@ -44,10 +44,10 @@ namespace Smol
 	void D3D11CommandList::beginRenderPass(
 		const D3D11Swapchain& swapchain,
 		const D3D11Texture* ds,
-		LoadAction loadAction,
-		StoreAction storeAction,
 		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil
+		const ClearDepthStencil& clearDepthStencil,
+		LoadAction loadAction,
+		StoreAction storeAction
 	) {
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
@@ -58,10 +58,10 @@ namespace Smol
 		beginRenderPass(
 			rtvs,
 			dsv,
-			loadAction,
-			storeAction,
 			clearColor,
-			clearDepthStencil
+			clearDepthStencil,
+			loadAction,
+			storeAction
 		);
 
 		inRenderPass = true;
@@ -272,10 +272,10 @@ namespace Smol
 	void D3D11CommandList::beginRenderPass(
 		std::span<RTV*> rtvs,
 		DSV* dsv,
-		LoadAction loadAction,
-		StoreAction storeAction,
 		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil
+		const ClearDepthStencil& clearDepthStencil,
+		LoadAction loadAction,
+		StoreAction
 	) {
 		context.OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), dsv);
 
