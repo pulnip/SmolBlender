@@ -16,9 +16,7 @@ namespace Smol
 		std::span<const D3D11Texture*> renderTargets,
 		const D3D11Texture* depthTarget,
 		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil,
-		LoadAction loadAction,
-		StoreAction storeAction
+		const ClearDepthStencil& clearDepthStencil
 	) {
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
@@ -30,12 +28,10 @@ namespace Smol
 		DSV* dsv = depthTarget != nullptr ? depthTarget->getDSV() : nullptr;
 
 		beginRenderPass(
-			rtvs,
+			std::span<RTV*>(rtvs, renderTargets.size()),
 			dsv,
-			clearColor,
-			clearDepthStencil,
-			loadAction,
-			storeAction
+			&clearColor,
+			&clearDepthStencil
 		);
 
 		inRenderPass = true;
@@ -43,25 +39,17 @@ namespace Smol
 
 	void D3D11CommandList::beginRenderPass(
 		const D3D11Swapchain& swapchain,
-		const D3D11Texture* ds,
-		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil,
-		LoadAction loadAction,
-		StoreAction storeAction
+		const D3D11Texture* ds
 	) {
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
 
-		RTV* rtvs[] = { swapchain.getRTV() };
+		RTV* rtvs[1] = { swapchain.getRTV() };
 		DSV* dsv = ds != nullptr ? ds->getDSV() : nullptr;
 
 		beginRenderPass(
 			rtvs,
-			dsv,
-			clearColor,
-			clearDepthStencil,
-			loadAction,
-			storeAction
+			dsv
 		);
 
 		inRenderPass = true;
@@ -272,22 +260,23 @@ namespace Smol
 	void D3D11CommandList::beginRenderPass(
 		std::span<RTV*> rtvs,
 		DSV* dsv,
-		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil,
-		LoadAction loadAction,
-		StoreAction
+		const ClearColor* clearColor,
+		const ClearDepthStencil* clearDepthStencil
 	) {
+		assert(rtvs.size() > 0);
 		context.OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), dsv);
 
-		if (loadAction == LoadAction::Clear) {
-			for (size_t i = 0; i < rtvs.size(); ++i)
-				context.ClearRenderTargetView(rtvs[i], clearColor.v);
+		if (clearColor != nullptr) {
+			for (auto rtv : rtvs) {
+				context.ClearRenderTargetView(rtv, clearColor->v);
+			}
+		}
 
-			if (dsv != nullptr)
-				context.ClearDepthStencilView(dsv,
-					D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
-					clearDepthStencil.depth, clearDepthStencil.stencil
-				);
+		if (clearDepthStencil != nullptr) {
+			context.ClearDepthStencilView(dsv,
+				D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
+				clearDepthStencil->depth, clearDepthStencil->stencil
+			);
 		}
 	}
 

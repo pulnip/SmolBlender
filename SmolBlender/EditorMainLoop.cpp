@@ -36,6 +36,7 @@ namespace Smol
 		cmdList.endRenderPass();
 		cmdList.close();
 
+		// Equivalent to swapchain.present();
 		device.submit(cmdList, &swapchain);
 
 		return true;

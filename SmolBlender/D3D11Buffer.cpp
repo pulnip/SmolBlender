@@ -12,7 +12,7 @@ namespace Smol
 		const std::string& name
 	)
 		: context(context)
-		, size(cfg.size)
+		, size(static_cast<u32>(cfg.size))
 	{
 		using enum BufferUsage;
 		using enum MemoryAccess;

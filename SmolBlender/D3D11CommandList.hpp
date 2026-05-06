@@ -14,17 +14,6 @@ namespace Smol
 		ComputeShader,
 	};
 
-	enum class LoadAction {
-		Load,
-		Clear,
-		DontCare
-	};
-	
-	enum class StoreAction {
-		Store,
-		DontCare
-	};
-
 	struct ClearColor { float v[4] = { 0, 0, 0, 1 }; };
 	struct ClearDepthStencil { float depth = 1.0f; UINT8 stencil = 0; };
 
@@ -64,17 +53,11 @@ namespace Smol
 			std::span<const D3D11Texture*> renderTargets,
 			const D3D11Texture* depthTarget = nullptr,
 			const ClearColor& clearColor = {},
-			const ClearDepthStencil& clearDepthStencil = {},
-			LoadAction loadAction = LoadAction::Clear,
-			StoreAction storeAction = StoreAction::Store
+			const ClearDepthStencil& clearDepthStencil = {}
 		);
 		void beginRenderPass(
 			const D3D11Swapchain&,
-			const D3D11Texture* depthTarget = nullptr,
-			const ClearColor& clearColor = {},
-			const ClearDepthStencil& clearDepthStencil = {},
-			LoadAction loadAction = LoadAction::Load,
-			StoreAction storeAction = StoreAction::Store
+			const D3D11Texture* depthTarget = nullptr
 		);
 		void endRenderPass();
 
@@ -134,10 +117,8 @@ namespace Smol
 		void beginRenderPass(
 			std::span<RTV*>,
 			DSV*,
-			const ClearColor&,
-			const ClearDepthStencil&,
-			LoadAction loadAction,
-			StoreAction storeAction
+			const ClearColor* clearColor = nullptr,
+			const ClearDepthStencil* clearDepthStencil = nullptr
 		);
 	};
 }

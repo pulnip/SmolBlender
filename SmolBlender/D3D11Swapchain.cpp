@@ -12,19 +12,19 @@ namespace Smol
 		, vsync(cfg.vsync), allowTearing(cfg.allowTearing)
 	{
         DXGI_SWAP_CHAIN_DESC1 swapChainDesc = {
-                .Width = cfg.width,
-                .Height = cfg.height,
-                .Format = cfg.format,
-                .Stereo = FALSE,
-                // No MSAA for swapchain
-                .SampleDesc = {1, 0},
-                .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
-                .BufferCount = cfg.bufferCount,
-                .Scaling = DXGI_SCALING_STRETCH,
-                .SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
-                .AlphaMode = DXGI_ALPHA_MODE_IGNORE,
-                .Flags = cfg.allowTearing ?
-                    DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : UINT(0)
+            .Width = cfg.width,
+            .Height = cfg.height,
+            .Format = cfg.format,
+            .Stereo = FALSE,
+            // No MSAA for swapchain
+            .SampleDesc = {1, 0},
+            .BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT,
+            .BufferCount = cfg.bufferCount,
+            .Scaling = DXGI_SCALING_STRETCH,
+            .SwapEffect = DXGI_SWAP_EFFECT_FLIP_DISCARD,
+            .AlphaMode = DXGI_ALPHA_MODE_IGNORE,
+            .Flags = cfg.allowTearing ?
+                DXGI_SWAP_CHAIN_FLAG_ALLOW_TEARING : UINT(0)
         };
 
         factory.CreateSwapChainForHwnd(
@@ -37,7 +37,6 @@ namespace Smol
         );
         createBackBuffer();
 
-
 #if defined(_DEBUG) || !defined(NDEBUG)
         if (!cfg.debugName.empty()) {
             swapchain->SetPrivateData(
@@ -47,9 +46,8 @@ namespace Smol
             );
         }
 #endif
-
 	}
-	
+
     void D3D11Swapchain::present() {
         UINT syncInterval = vsync ? 1 : 0;
         UINT flags = (!vsync && allowTearing) ?
@@ -67,9 +65,9 @@ namespace Smol
 
         DXGI_SWAP_CHAIN_DESC1 desc;
         swapchain->GetDesc1(&desc);
-        
+
         swapchain->ResizeBuffers(0, width, height, DXGI_FORMAT_UNKNOWN, desc.Flags);
-        
+
         createBackBuffer();
 	}
 

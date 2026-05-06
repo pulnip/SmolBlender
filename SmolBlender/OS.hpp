@@ -24,8 +24,6 @@ namespace Smol
 		// singleton
 		static OS* instance;
 
-		D3D11Device device;
-
 	public:
 		OS(const WindowConfig&);
 		virtual ~OS();
@@ -40,8 +38,6 @@ namespace Smol
 		u32 getHeight() const {	return height; }
 
 		void setMainLoop(MainLoop* mainLoop) { this->mainLoop = mainLoop; }
-
-		D3D11Device& getDevice() { return device; }
 	};
 
 #define OS_ OS::singleton()
