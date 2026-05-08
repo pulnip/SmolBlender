@@ -1,5 +1,7 @@
 #pragma once
 
+#include <memory>
+
 #include "MainLoop.hpp"
 #include "Util.hpp"
 
@@ -13,6 +15,8 @@ namespace Smol {
 		D3D11CommandList cmdList;
 
 		D3D11GraphicsPipelineState pipeline;
+
+		D3D11Buffer vertexBuffer;
 
 	public:
 		EditorMainLoop(const SwapchainConfig&);
