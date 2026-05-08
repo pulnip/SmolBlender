@@ -25,9 +25,9 @@ namespace Smol
 
 		// Notice! Counter-Clockwise for front face
 		std::array vertices = {
-			Vertex1{.position = {-0.6,  0.8}, .color = {1, 0, 0, 1}},
-			Vertex1{.position = { 0.0, -0.8}, .color = {0, 1, 0, 1}},
-			Vertex1{.position = { 0.6,  0.8}, .color = {0, 0, 1, 1}}
+			Vertex1{.position = {-0.6f,  0.8f}, .color = {1, 0, 0, 1}},
+			Vertex1{.position = { 0.0f, -0.8f}, .color = {0, 1, 0, 1}},
+			Vertex1{.position = { 0.6f,  0.8f}, .color = {0, 0, 1, 1}}
 		};
 		
 		vertexBuffer = device.createBuffer(BufferConfig{
@@ -51,7 +51,7 @@ namespace Smol
 		);
 
 		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
-		cmdList.draw(3, 1);
+		cmdList.draw(3);
 
 		cmdList.endRenderPass();
 		cmdList.close();
