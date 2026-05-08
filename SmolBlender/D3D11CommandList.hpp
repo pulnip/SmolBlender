@@ -22,7 +22,7 @@ namespace Smol
 	class D3D11CommandList {
 	private:
 		// Note: Immediate context.
-		DeviceContext& context;
+		DeviceContext* context = nullptr;
 		// simulate command recording
 		bool isRecording = false;
 		bool inRenderPass = false;
@@ -33,8 +33,9 @@ namespace Smol
 #endif
 
 	public:
+		D3D11CommandList() = default;
 		D3D11CommandList(Device&, DeviceContext& ctx)
-			: context(ctx) {}
+			: context(&ctx) {}
 		~D3D11CommandList() = default;
 
 		DECLARE_PINNED(D3D11CommandList)
@@ -64,7 +65,7 @@ namespace Smol
 		void setVertexBuffer(
 			const D3D11Buffer&,
 			u32 slot,
-			u32 stride = sizeof(Vertex),
+			u32 stride,
 			u32 offset = 0
 		);
 		void setIndexBuffer(

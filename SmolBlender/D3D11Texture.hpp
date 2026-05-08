@@ -11,7 +11,7 @@ namespace Smol
 		DXGI_FORMAT format = DXGI_FORMAT_UNKNOWN;
 		u32 width = 0, height = 0;
 
-		DeviceContext& context;
+		DeviceContext* context = nullptr;
 
 		SRVRAII srv = nullptr;
 		RTVRAII rtv = nullptr;
@@ -19,6 +19,7 @@ namespace Smol
 		DSVRAII dsv = nullptr;
 
 	public:
+		D3D11Texture() = default;
 		D3D11Texture(Device&, DeviceContext&, const TextureConfig&, const std::string& name);
 		~D3D11Texture() = default;
 

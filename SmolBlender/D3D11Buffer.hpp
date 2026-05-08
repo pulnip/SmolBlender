@@ -11,12 +11,13 @@ namespace Smol
 		BufferRAII stagingBuffer = nullptr; // for CPURead download
 		u32 size = 0;
 
-		DeviceContext& context;
+		DeviceContext* context = nullptr;
 
 		SRVRAII srv = nullptr;
 		UAVRAII uav = nullptr;
 
 	public:
+		D3D11Buffer() = default;
 		D3D11Buffer(Device&, DeviceContext&, const BufferConfig&, const std::string& name);
 		~D3D11Buffer() = default;
 

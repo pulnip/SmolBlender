@@ -10,6 +10,7 @@ namespace Smol
 		SamplerRAII sampler = nullptr;
 
 	public:
+		D3D11Sampler() = default;
 		D3D11Sampler(Device&, const SamplerConfig&, const std::string& name);
 		~D3D11Sampler() = default;
 

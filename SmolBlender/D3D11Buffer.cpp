@@ -11,7 +11,7 @@ namespace Smol
 		const BufferConfig& cfg,
 		const std::string& name
 	)
-		: context(context)
+		: context(&context)
 		, size(static_cast<u32>(cfg.size))
 	{
 		using enum BufferUsage;
@@ -110,16 +110,18 @@ namespace Smol
 	}
 
 	void D3D11Buffer::upload(const void* src, u32 dataSize, u32 offset) {
+		assert(context != nullptr);
 		assert(offset + dataSize <= size && "Upload range exceeds buffer size");
 		D3D11_MAPPED_SUBRESOURCE mapped;
-		context.Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
+		context->Map(buffer.Get(), 0, D3D11_MAP_WRITE_DISCARD, 0, &mapped);
 
 		std::memcpy(static_cast<u8*>(mapped.pData) + offset, src, dataSize);
 
-		context.Unmap(buffer.Get(), 0);
+		context->Unmap(buffer.Get(), 0);
 	}
 
 	void D3D11Buffer::download(void* dst, u32 dstSize, u32 offset) {
+		assert(context != nullptr);
 		assert(offset + dstSize <= size && "Download range exceeds buffer size");
 		assert(stagingBuffer && "requires MemoryAccess::CPURead");
 
@@ -132,7 +134,7 @@ namespace Smol
 			.bottom = 1,
 			.back = 1
 		};
-		context.CopySubresourceRegion(
+		context->CopySubresourceRegion(
 			stagingBuffer.Get(), 0,   // dst resource, dst subresource
 			0, 0, 0,                   // dst x, y, z.
 			buffer.Get(), 0,           // src resource, src subresource
@@ -140,10 +142,10 @@ namespace Smol
 		);
 
 		D3D11_MAPPED_SUBRESOURCE mapped;
-		context.Map(stagingBuffer.Get(), 0, D3D11_MAP_READ, 0, &mapped);
+		context->Map(stagingBuffer.Get(), 0, D3D11_MAP_READ, 0, &mapped);
 	
 		std::memcpy(dst, mapped.pData, dstSize);
 	
-		context.Unmap(stagingBuffer.Get(), 0);
+		context->Unmap(stagingBuffer.Get(), 0);
 	}
 }

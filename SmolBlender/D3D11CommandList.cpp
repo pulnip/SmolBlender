@@ -18,6 +18,7 @@ namespace Smol
 		const ClearColor& clearColor,
 		const ClearDepthStencil& clearDepthStencil
 	) {
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
 
@@ -41,6 +42,7 @@ namespace Smol
 		const D3D11Swapchain& swapchain,
 		const D3D11Texture* ds
 	) {
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
 
@@ -56,6 +58,7 @@ namespace Smol
 	}
 
 	void D3D11CommandList::endRenderPass() {
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(inRenderPass && "Not in a render pass. Did you call CommandList::beginRenderPass()?");
 		
@@ -65,18 +68,18 @@ namespace Smol
 		static ID3D11ShaderResourceView* nullSRVs[D3D11_COMMONSHADER_INPUT_RESOURCE_SLOT_COUNT] = {};
 
 		if (maxBindedVSSRV > 0)
-			context.VSSetShaderResources(0, maxBindedVSSRV, nullSRVs);
+			context->VSSetShaderResources(0, maxBindedVSSRV, nullSRVs);
 		if (maxBindedPSSRV > 0)
-			context.PSSetShaderResources(0, maxBindedPSSRV, nullSRVs);
+			context->PSSetShaderResources(0, maxBindedPSSRV, nullSRVs);
 		if (maxBindedCSSRV > 0)
-			context.CSSetShaderResources(0, maxBindedCSSRV, nullSRVs);
+			context->CSSetShaderResources(0, maxBindedCSSRV, nullSRVs);
 
 		maxBindedVSSRV = 0;
 		maxBindedPSSRV = 0;
 		maxBindedCSSRV = 0;
 
 		// Unbind render targets to avoid warnings about resources being bound while being used.
-		context.OMSetRenderTargets(0, nullptr, nullptr);
+		context->OMSetRenderTargets(0, nullptr, nullptr);
 #endif
 
 		inRenderPass = false;
@@ -85,7 +88,8 @@ namespace Smol
 	void D3D11CommandList::setPipelineState(
 		const D3D11GraphicsPipelineState& pso
 	) {
-		pso.bind(context);
+		assert(context != nullptr);
+		pso.bind(*context);
 	}
 
 	void D3D11CommandList::setVertexBuffer(
@@ -94,11 +98,12 @@ namespace Smol
 		u32 stride,
 		u32 offset
 	) {
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(inRenderPass && "Not in a render pass. Did you call CommandList::beginRenderPass()?");
 	
 		Buffer* const buffers[] = { buffer.get() };
-		context.IASetVertexBuffers(
+		context->IASetVertexBuffers(
 			slot,
 			1,
 			buffers,
@@ -112,10 +117,11 @@ namespace Smol
 		DXGI_FORMAT format,
 		u32 offset
 	) {
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(inRenderPass && "Not in a render pass. Did you call CommandList::beginRenderPass()?");
 	
-		context.IASetIndexBuffer(
+		context->IASetIndexBuffer(
 			buffer.get(),
 			format,
 			offset
@@ -129,19 +135,20 @@ namespace Smol
 		u32 offset
 	) {
 		using enum ShaderStage;
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(inRenderPass && "Not in a render pass. Did you call CommandList::beginRenderPass()?");
 	
 		Buffer* const buffers[] = { buffer.get() };
 		switch (stage) {
 		case VertexShader:
-			context.VSSetConstantBuffers(slot, 1, buffers);
+			context->VSSetConstantBuffers(slot, 1, buffers);
 			break;
 		case PixelShader:
-			context.PSSetConstantBuffers(slot, 1, buffers);
+			context->PSSetConstantBuffers(slot, 1, buffers);
 			break;
 		case ComputeShader:
-			context.CSSetConstantBuffers(slot, 1, buffers);
+			context->CSSetConstantBuffers(slot, 1, buffers);
 			break;
 		default:
 			std::unreachable();
@@ -154,6 +161,7 @@ namespace Smol
 		ShaderStage stage
 	) {
 		using enum ShaderStage;
+		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(inRenderPass && "Not in a render pass. Did you call CommandList::beginRenderPass()?");
 
@@ -163,19 +171,19 @@ namespace Smol
 #if defined(_DEBUG) || !defined(NDEBUG)
 			maxBindedVSSRV = std::max(maxBindedVSSRV, slot + 1);
 #endif
-			context.VSSetShaderResources(slot, 1, views);
+			context->VSSetShaderResources(slot, 1, views);
 			break;
 		case PixelShader:
 #if defined(_DEBUG) || !defined(NDEBUG)
 			maxBindedPSSRV = std::max(maxBindedPSSRV, slot + 1);
 #endif
-			context.PSSetShaderResources(slot, 1, views);
+			context->PSSetShaderResources(slot, 1, views);
 			break;
 		case ComputeShader:
 #if defined(_DEBUG) || !defined(NDEBUG)
 			maxBindedCSSRV = std::max(maxBindedCSSRV, slot + 1);
 #endif
-			context.CSSetShaderResources(slot, 1, views);
+			context->CSSetShaderResources(slot, 1, views);
 			break;
 		default:
 			std::unreachable();
@@ -188,17 +196,18 @@ namespace Smol
 		ShaderStage stage
 	) {
 		using enum ShaderStage;
+		assert(context != nullptr);
 		auto s = sampler.get();
 
 		switch (stage) {
 		case VertexShader:
-			context.VSSetSamplers(slot, 1, &s);
+			context->VSSetSamplers(slot, 1, &s);
 			break;
 		case PixelShader:
-			context.PSSetSamplers(slot, 1, &s);
+			context->PSSetSamplers(slot, 1, &s);
 			break;
 		case ComputeShader:
-			context.CSSetSamplers(slot, 1, &s);
+			context->CSSetSamplers(slot, 1, &s);
 			break;
 		default:
 			std::unreachable();
@@ -208,13 +217,15 @@ namespace Smol
 	void D3D11CommandList::setViewport(
 		const D3D11_VIEWPORT& viewport
 	) {
-		context.RSSetViewports(1, &viewport);
+		assert(context != nullptr);
+		context->RSSetViewports(1, &viewport);
 	}
 
 	void D3D11CommandList::setScissorRect(
 		const D3D11_RECT& scissor
 	) {
-		context.RSSetScissorRects(1, &scissor);
+		assert(context != nullptr);
+		context->RSSetScissorRects(1, &scissor);
 	}
 
 	void D3D11CommandList::draw(
@@ -223,15 +234,16 @@ namespace Smol
 		u32 startVertex,
 		u32 startInstance
 	) {
+		assert(context != nullptr);
 		if (instanceCount > 1)
-			context.DrawInstanced(
+			context->DrawInstanced(
 				vertexCount,
 				instanceCount,
 				startVertex,
 				startInstance
 			);
 		else
-			context.Draw(vertexCount, startVertex);
+			context->Draw(vertexCount, startVertex);
 	}
 
 	void D3D11CommandList::drawIndexed(
@@ -241,8 +253,9 @@ namespace Smol
 		i32 baseVertex,
 		u32 startInstance
 	) {
+		assert(context != nullptr);
 		if (instanceCount > 1)
-			context.DrawIndexedInstanced(
+			context->DrawIndexedInstanced(
 				indexCount,
 				instanceCount,
 				startIndex,
@@ -250,7 +263,7 @@ namespace Smol
 				startInstance
 			);
 		else
-			context.DrawIndexed(
+			context->DrawIndexed(
 				indexCount,
 				startIndex,
 				baseVertex
@@ -263,17 +276,18 @@ namespace Smol
 		const ClearColor* clearColor,
 		const ClearDepthStencil* clearDepthStencil
 	) {
+		assert(context != nullptr);
 		assert(rtvs.size() > 0);
-		context.OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), dsv);
+		context->OMSetRenderTargets(static_cast<UINT>(rtvs.size()), rtvs.data(), dsv);
 
 		if (clearColor != nullptr) {
 			for (auto rtv : rtvs) {
-				context.ClearRenderTargetView(rtv, clearColor->v);
+				context->ClearRenderTargetView(rtv, clearColor->v);
 			}
 		}
 
 		if (clearDepthStencil != nullptr) {
-			context.ClearDepthStencilView(dsv,
+			context->ClearDepthStencilView(dsv,
 				D3D11_CLEAR_DEPTH | D3D11_CLEAR_STENCIL,
 				clearDepthStencil->depth, clearDepthStencil->stencil
 			);
@@ -281,9 +295,10 @@ namespace Smol
 	}
 
 	void D3D11CommandList::waitUntilCompleted() {
+		assert(context != nullptr);
 		assert(!isRecording && "Did you call CommandList::begin()?");
 
 		// D3D11 executes commands immediately, so we can just flush the context.
-		context.Flush();
+		context->Flush();
 	}
 }

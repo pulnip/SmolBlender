@@ -20,7 +20,7 @@ namespace Smol
 		const TextureConfig& cfg,
 		const std::string& name
 	)
-		: context(context)
+		: context(&context)
 		, width(cfg.width), height(cfg.height)
 		, format(cfg.format)
 	{

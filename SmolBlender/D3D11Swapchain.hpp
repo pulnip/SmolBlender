@@ -19,6 +19,7 @@ namespace Smol
 		Device* device = nullptr;
 
 	public:
+		D3D11Swapchain() = default;
 		D3D11Swapchain(Device&, Factory&, const SwapchainConfig&);
 		~D3D11Swapchain() = default;
 
