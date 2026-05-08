@@ -89,6 +89,9 @@
     <ClInclude Include="INC_Windows.h">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="Vertex.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ps.hlsl">

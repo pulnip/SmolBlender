@@ -153,6 +153,7 @@
     <ClInclude Include="MainLoop.hpp" />
     <ClInclude Include="OS.hpp" />
     <ClInclude Include="Util.hpp" />
+    <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ps.hlsl">
