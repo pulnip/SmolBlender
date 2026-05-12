@@ -14,7 +14,7 @@ int main(int argc, char* argv[]) {
 	try {
 		OS os(WindowConfig{
 			L"SmolBlender",
-			1280, 720
+			800, 800
 		});
 		auto mainLoop = std::make_unique<EditorMainLoop>(
 			SwapchainConfig{

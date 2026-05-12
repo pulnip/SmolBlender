@@ -1,4 +1,5 @@
 #include <array>
+#include <cmath>
 #include "EditorMainLoop.hpp"
 
 #include "D3D11Device.hpp"
@@ -24,10 +25,11 @@ namespace Smol
 		using enum BufferUsage;
 
 		// Notice! Counter-Clockwise for front face
+		auto x = 0.8f * std::sqrtf(3)/2;
 		std::array vertices = {
-			Vertex1{.position = {-0.6f,  0.8f}, .color = {1, 0, 0, 1}},
-			Vertex1{.position = { 0.0f, -0.8f}, .color = {0, 1, 0, 1}},
-			Vertex1{.position = { 0.6f,  0.8f}, .color = {0, 0, 1, 1}}
+			Vertex1{.position = {0.0f,  0.8f}, .color = {1, 0, 0, 1}},
+			Vertex1{.position = {  -x, -0.4f}, .color = {0, 1, 0, 1}},
+			Vertex1{.position = {   x, -0.4f}, .color = {0, 0, 1, 1}}
 		};
 		
 		vertexBuffer = device.createBuffer(BufferConfig{
@@ -35,19 +37,44 @@ namespace Smol
 			.usage = BufferUsage::VertexBuffer,
 			.initialData = vertices.data()
 		}, "Vertex Buffer");
+		constantBuffer = device.createBuffer(BufferConfig{
+			.size = sizeof(float) * mat.size(),
+			.usage = BufferUsage::ConstantBuffer,
+			.access = MemoryAccess::CPUWrite
+		}, "Constant Buffer");
 	}
 
 	void EditorMainLoop::processInput() {
 
 	}
 
+	void EditorMainLoop::fillMatFromTheta(float theta) {
+		float cost = std::cos(theta), sint = std::sin(theta);
+
+		mat = {
+			 cost, sint, 0.0f, 0.0f,
+			-sint, cost, 0.0f, 0.0f,
+			 0.0f, 0.0f, 1.0f, 0.0f,
+			 0.0f, 0.0f, 0.0f, 1.0f
+		};
+	}
+
 	bool EditorMainLoop::update(float deltaTime, float totalTime) {
+		fillMatFromTheta(totalTime);
+
 		return true;
 	}
 
 	void EditorMainLoop::render() {
+		ClearColor clearColor{ 0, 0, 0, 1 };
+
 		cmdList.begin();
-		cmdList.beginRenderPass(swapchain);
+		cmdList.beginRenderPass(
+			swapchain,
+			&clearColor
+		);
+
+		constantBuffer.upload(mat.data(), sizeof(float) * mat.size());
 
 		cmdList.setPipelineState(pipeline);
 
@@ -57,6 +84,8 @@ namespace Smol
 			.MinDepth = 0, .MaxDepth = 1
 			}
 		);
+
+		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
 		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
 		cmdList.draw(3);

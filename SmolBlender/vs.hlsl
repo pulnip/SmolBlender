@@ -28,10 +28,15 @@ VertexOut vs_main(uint vertexID : SV_VertexID)
     return output;
 }
 
+cbuffer uniforms: register(b0)
+{
+    float4x4 mat;
+};
+
 VertexOut vs_main1(Vertex1 input)
 {
     VertexOut output;
-    output.position = float4(input.position, 0, 1);
+    output.position = mul(mat, float4(input.position, 0, 1));
     output.color = input.color;
     
     return output;

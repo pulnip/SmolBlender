@@ -1,5 +1,6 @@
 #pragma once
 
+#include <array>
 #include <memory>
 
 #include "MainLoop.hpp"
@@ -17,6 +18,16 @@ namespace Smol {
 		D3D11GraphicsPipelineState pipeline;
 
 		D3D11Buffer vertexBuffer;
+		
+		std::array<float, 16> mat = {
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 1.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		};
+		D3D11Buffer constantBuffer;
+
+		void fillMatFromTheta(float theta);
 
 	public:
 		EditorMainLoop(const SwapchainConfig&);
