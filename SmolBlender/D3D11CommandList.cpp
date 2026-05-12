@@ -14,9 +14,9 @@ namespace Smol
 {
 	void D3D11CommandList::beginRenderPass(
 		std::span<const D3D11Texture*> renderTargets,
+		const ClearColor* clearColor,
 		const D3D11Texture* depthTarget,
-		const ClearColor& clearColor,
-		const ClearDepthStencil& clearDepthStencil
+		const ClearDepthStencil* clearDepthStencil
 	) {
 		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
@@ -30,9 +30,9 @@ namespace Smol
 
 		beginRenderPass(
 			std::span<RTV*>(rtvs, renderTargets.size()),
+			clearColor,
 			dsv,
-			&clearColor,
-			&clearDepthStencil
+			clearDepthStencil
 		);
 
 		inRenderPass = true;
@@ -40,18 +40,22 @@ namespace Smol
 
 	void D3D11CommandList::beginRenderPass(
 		const D3D11Swapchain& swapchain,
-		const D3D11Texture* ds
+		const ClearColor* clearColor,
+		const D3D11Texture* depthTarget,
+		const ClearDepthStencil* clearDepthStencil
 	) {
 		assert(context != nullptr);
 		assert(isRecording && "Did you call CommandList::begin()?");
 		assert(!inRenderPass && "Already in a render pass. Did you call CommandList::endRenderPass()?");
 
 		RTV* rtvs[1] = { swapchain.getRTV() };
-		DSV* dsv = ds != nullptr ? ds->getDSV() : nullptr;
+		DSV* dsv = depthTarget != nullptr ? depthTarget->getDSV() : nullptr;
 
 		beginRenderPass(
 			rtvs,
-			dsv
+			clearColor,
+			dsv,
+			clearDepthStencil
 		);
 
 		inRenderPass = true;
@@ -272,8 +276,8 @@ namespace Smol
 
 	void D3D11CommandList::beginRenderPass(
 		std::span<RTV*> rtvs,
-		DSV* dsv,
 		const ClearColor* clearColor,
+		DSV* dsv,
 		const ClearDepthStencil* clearDepthStencil
 	) {
 		assert(context != nullptr);

@@ -52,13 +52,15 @@ namespace Smol
 
 		void beginRenderPass(
 			std::span<const D3D11Texture*> renderTargets,
+			const ClearColor* clearColor = nullptr,
 			const D3D11Texture* depthTarget = nullptr,
-			const ClearColor& clearColor = {},
-			const ClearDepthStencil& clearDepthStencil = {}
+			const ClearDepthStencil* clearDepthStencil = nullptr
 		);
 		void beginRenderPass(
 			const D3D11Swapchain&,
-			const D3D11Texture* depthTarget = nullptr
+			const ClearColor* clearColor = nullptr,
+			const D3D11Texture* depthTarget = nullptr,
+			const ClearDepthStencil * clearDepthStencil = nullptr
 		);
 		void endRenderPass();
 
@@ -117,8 +119,8 @@ namespace Smol
 	private:
 		void beginRenderPass(
 			std::span<RTV*>,
-			DSV*,
 			const ClearColor* clearColor = nullptr,
+			DSV* dsv = nullptr,
 			const ClearDepthStencil* clearDepthStencil = nullptr
 		);
 	};
