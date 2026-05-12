@@ -37,7 +37,15 @@ namespace Smol
 		}, "Vertex Buffer");
 	}
 
+	void EditorMainLoop::processInput() {
+
+	}
+
 	bool EditorMainLoop::update(float deltaTime, float totalTime) {
+		return true;
+	}
+
+	void EditorMainLoop::render() {
 		cmdList.begin();
 		cmdList.beginRenderPass(swapchain);
 
@@ -58,8 +66,6 @@ namespace Smol
 
 		// Equivalent to swapchain.present();
 		device.submit(cmdList, &swapchain);
-
-		return true;
 	}
 
 	void EditorMainLoop::finalize() {

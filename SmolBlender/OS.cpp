@@ -60,6 +60,13 @@ namespace Smol
 		return hwnd;
 	}
 
+	float Timer::tick() {
+		auto now = Clock::now();
+		std::chrono::duration<float> delta = now - lastTime;
+		lastTime = now;
+		return delta.count();
+	}
+
 	OS* OS::instance = nullptr;
 
 	OS::OS(const WindowConfig& cfg){
@@ -92,11 +99,21 @@ namespace Smol
 		forceQuit = false;
 		mainLoop->initialize();
 
+		// initialize Timer
+		timer.tick();
+
+		auto totalTime = 0.0f;
+
 		while (!forceQuit) {
+			auto deltaTime = timer.tick();
+			totalTime += deltaTime;
+
 			processEvents();
 
-			if (!mainLoop->update(1.0f / 60, 0.0f))
+			mainLoop->processInput();
+			if (!mainLoop->update(deltaTime, totalTime))
 				break;
+			mainLoop->render();
 		}
 
 		mainLoop->finalize();

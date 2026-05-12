@@ -8,7 +8,7 @@
 #include "D3D11Device.hpp"
 
 namespace Smol {
-	class EditorMainLoop : public MainLoop {
+	class EditorMainLoop final: public MainLoop {
 	private:
 		D3D11Device device;
 		D3D11Swapchain swapchain;
@@ -24,8 +24,12 @@ namespace Smol {
 
 		DECLARE_PINNED(EditorMainLoop)
 
-		virtual void initialize() override;
-		virtual bool update(float deltaTime, float totalTime) override;
-		virtual void finalize() override;
+		void initialize() override;
+
+		void processInput() override;
+		bool update(float deltaTime, float totalTime) override;
+		void render() override;
+
+		void finalize() override;
 	};
 }

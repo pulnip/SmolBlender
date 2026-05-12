@@ -1,5 +1,6 @@
 #pragma once
 
+#include <chrono>
 #include "INC_Windows.h"
 #include "fwd.hpp"
 #include "D3D11Device.hpp"
@@ -13,6 +14,15 @@ namespace Smol
 
 	HWND createMyWindow(const WindowConfig&, bool immediateShow = true);
 
+	class Timer {
+	private:
+		using Clock = std::chrono::steady_clock;
+		Clock::time_point lastTime = Clock::now();
+
+	public:
+		float tick();
+	};
+
 	class OS {
 	private:
 		HWND hwnd = nullptr;
@@ -23,6 +33,8 @@ namespace Smol
 
 		// singleton
 		static OS* instance;
+
+		Timer timer;
 
 	public:
 		OS(const WindowConfig&);

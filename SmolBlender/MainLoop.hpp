@@ -5,7 +5,11 @@ namespace Smol
 	class MainLoop {
 	public:
 		virtual void initialize() {}
+
+		virtual void processInput() {}
 		virtual bool update(float deltaTime, float totalTime) = 0;
+		virtual void render() {}
+
 		virtual void finalize() {}
 	};
 }
