@@ -28,29 +28,55 @@ namespace Smol
 		HWND hwnd = nullptr;
 		u32 width, height;
 
-		MainLoop* mainLoop = nullptr;
 		bool forceQuit = false;
 
-		// singleton
-		static OS* instance;
+		static OS* singleton;
 
 		Timer timer;
+
+		
+		struct MouseState {
+			i32 x = 0, y = 0;
+			i32 dx = 0, dy = 0;
+			bool midDown = false;
+			bool midPressed = false, midReleased = false;
+		} mouse;
 
 	public:
 		OS(const WindowConfig&);
 		virtual ~OS();
 
-		void run();
+		void run(MainLoop& mainLoop);
 		void processEvents();
 
-		inline static OS& singleton(){ return *instance; }
+		inline static OS& get(){ return *singleton; }
 
 		HWND getWindow() const { return hwnd; }
 		u32 getWidth() const { return width; }
 		u32 getHeight() const {	return height; }
 
-		void setMainLoop(MainLoop* mainLoop) { this->mainLoop = mainLoop; }
+		void onMouseMove(i32 x, i32 y) {
+			mouse.dx += x - mouse.x;
+			mouse.dy += y - mouse.y;
+			mouse.x = x;
+			mouse.y = y;
+		}
+		void onMidDown(int x, int y) {
+			mouse.midDown = true;
+			mouse.midPressed = true;
+			mouse.x = x;
+			mouse.y = y;
+		}
+		void onMidUp(int x, int y) {
+			mouse.midDown = false;
+			mouse.midReleased = true;
+		}
+		void consumeFrameInput() {
+			mouse.dx = mouse.dy = 0;
+			mouse.midPressed = mouse.midReleased = false;
+		}
+		const MouseState& getMouse() const { return mouse; }
 	};
-
-#define OS_ OS::singleton()
 }
+
+#define OS_ Smol::OS::get()

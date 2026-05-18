@@ -16,15 +16,12 @@ int main(int argc, char* argv[]) {
 			L"SmolBlender",
 			800, 800
 		});
-		auto mainLoop = std::make_unique<EditorMainLoop>(
-			SwapchainConfig{
-				.hwnd = OS_.getWindow(),
-				.width = OS_.getWidth(), .height = OS_.getHeight()
-			}
-		);
-		OS_.setMainLoop(mainLoop.get());
+		EditorMainLoop mainLoop(SwapchainConfig{
+			.hwnd = OS_.getWindow(),
+			.width = OS_.getWidth(), .height = OS_.getHeight()
+		});
 
-		os.run();
+		os.run(mainLoop);
 	}
 	catch (const std::exception& e) {
 		std::println("Error: {}", e.what());

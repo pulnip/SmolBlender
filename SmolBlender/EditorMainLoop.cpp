@@ -45,7 +45,12 @@ namespace Smol
 	}
 
 	void EditorMainLoop::processInput() {
+		const auto mouse = OS_.getMouse();
 
+		bool isMouseMoved = mouse.dx != 0 || mouse.dy != 0;
+		if (mouse.midDown && isMouseMoved) {
+			printf("asd");
+		}
 	}
 
 	void EditorMainLoop::fillMatFromTheta(float theta) {
@@ -74,7 +79,8 @@ namespace Smol
 			&clearColor
 		);
 
-		constantBuffer.upload(mat.data(), sizeof(float) * mat.size());
+		auto matSize = static_cast<u32>(sizeof(float) * mat.size());
+		constantBuffer.upload(mat.data(), matSize);
 
 		cmdList.setPipelineState(pipeline);
 

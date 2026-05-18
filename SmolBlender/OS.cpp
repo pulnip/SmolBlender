@@ -1,5 +1,6 @@
 #include <stdexcept>
 #include "INC_Windows.h"
+#include <windowsx.h>
 #include "MainLoop.hpp"
 #include "OS.hpp"
 
@@ -8,6 +9,17 @@ static LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lPa
 	case WM_CLOSE:
 		PostQuitMessage(0);
 		break;
+	case WM_MOUSEMOVE: {
+		OS_.onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	} break;
+	case WM_MBUTTONDOWN: {
+		SetCapture(hwnd);
+		OS_.onMidDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	} break;
+	case WM_MBUTTONUP: {
+		ReleaseCapture();
+		OS_.onMidUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+	} break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
 	}
@@ -19,17 +31,17 @@ namespace Smol
 {
 	HWND createMyWindow(const WindowConfig& cfg, bool immediateShow) {
 		WNDCLASSEX wc{
-		sizeof(WNDCLASSEX),
-		CS_CLASSDC,
-		MyWndProc,
-		0L, 0L,
-		GetModuleHandle(NULL),
-		nullptr,
-		nullptr,
-		nullptr,
-		nullptr,
-		L"SmolBlenderWindowClass", // lpszClassName
-		nullptr
+			sizeof(WNDCLASSEX),
+			CS_CLASSDC,
+			MyWndProc,
+			0L, 0L,
+			GetModuleHandle(NULL),
+			nullptr,
+			nullptr,
+			nullptr,
+			nullptr,
+			L"SmolBlenderWindowClass", // lpszClassName
+			nullptr
 		};
 
 		RegisterClassEx(&wc);
@@ -67,14 +79,14 @@ namespace Smol
 		return delta.count();
 	}
 
-	OS* OS::instance = nullptr;
+	OS* OS::singleton = nullptr;
 
 	OS::OS(const WindowConfig& cfg){
-		if (instance != nullptr) {
+		if (singleton != nullptr) {
 			throw std::runtime_error("OS must be singleton object");
 		}
 
-		instance = this;
+		singleton = this;
 
 		hwnd = createMyWindow(cfg, false);
 		width = cfg.width;
@@ -90,14 +102,12 @@ namespace Smol
 			hwnd = nullptr;
 		}
 
-		instance = nullptr;
+		singleton = nullptr;
 	}
 
-	void OS::run() {
-		if (mainLoop == nullptr) return;
-
+	void OS::run(MainLoop& mainLoop) {
 		forceQuit = false;
-		mainLoop->initialize();
+		mainLoop.initialize();
 
 		// initialize Timer
 		timer.tick();
@@ -110,13 +120,16 @@ namespace Smol
 
 			processEvents();
 
-			mainLoop->processInput();
-			if (!mainLoop->update(deltaTime, totalTime))
+			mainLoop.processInput();
+			if (!mainLoop.update(deltaTime, totalTime))
 				break;
-			mainLoop->render();
+
+			mainLoop.render();
+
+			consumeFrameInput();
 		}
 
-		mainLoop->finalize();
+		mainLoop.finalize();
 	}
 
 	void OS::processEvents() {
