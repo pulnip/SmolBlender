@@ -49,17 +49,11 @@ namespace Smol
 
 		bool isMouseMoved = mouse.dx != 0 || mouse.dy != 0;
 		if (mouse.midDown && isMouseMoved) {
-			printf("asd");
+			mat = mat * rotateZMat(std::sqrt(mouse.dx * mouse.dx + mouse.dy * mouse.dy) / 100);
 		}
 	}
 
-	void EditorMainLoop::fillMatFromTheta(float theta) {
-		mat = rotateZMat(theta);
-	}
-
 	bool EditorMainLoop::update(float deltaTime, float totalTime) {
-		fillMatFromTheta(totalTime);
-
 		return true;
 	}
 

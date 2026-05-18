@@ -22,8 +22,6 @@ namespace Smol {
 		Mat4 mat = unitMat();
 		D3D11Buffer constantBuffer;
 
-		void fillMatFromTheta(float theta);
-
 	public:
 		EditorMainLoop(const SwapchainConfig&);
 		~EditorMainLoop() = default;
