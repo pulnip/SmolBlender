@@ -1,8 +1,8 @@
 #pragma once
 
-#include <array>
 #include <memory>
 
+#include "LinearAlgebra.hpp"
 #include "MainLoop.hpp"
 #include "Util.hpp"
 
@@ -19,12 +19,7 @@ namespace Smol {
 
 		D3D11Buffer vertexBuffer;
 		
-		std::array<float, 16> mat = {
-			1.0f, 0.0f, 0.0f, 0.0f,
-			0.0f, 1.0f, 0.0f, 0.0f,
-			0.0f, 0.0f, 1.0f, 0.0f,
-			0.0f, 0.0f, 0.0f, 1.0f
-		};
+		Mat4 mat = unitMat();
 		D3D11Buffer constantBuffer;
 
 		void fillMatFromTheta(float theta);

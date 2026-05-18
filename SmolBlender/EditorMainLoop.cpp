@@ -38,7 +38,7 @@ namespace Smol
 			.initialData = vertices.data()
 		}, "Vertex Buffer");
 		constantBuffer = device.createBuffer(BufferConfig{
-			.size = sizeof(float) * mat.size(),
+			.size = MAT_BYTE_SIZE,
 			.usage = BufferUsage::ConstantBuffer,
 			.access = MemoryAccess::CPUWrite
 		}, "Constant Buffer");
@@ -54,14 +54,7 @@ namespace Smol
 	}
 
 	void EditorMainLoop::fillMatFromTheta(float theta) {
-		float cost = std::cos(theta), sint = std::sin(theta);
-
-		mat = {
-			 cost, sint, 0.0f, 0.0f,
-			-sint, cost, 0.0f, 0.0f,
-			 0.0f, 0.0f, 1.0f, 0.0f,
-			 0.0f, 0.0f, 0.0f, 1.0f
-		};
+		mat = rotateZMat(theta);
 	}
 
 	bool EditorMainLoop::update(float deltaTime, float totalTime) {
@@ -79,8 +72,8 @@ namespace Smol
 			&clearColor
 		);
 
-		auto matSize = static_cast<u32>(sizeof(float) * mat.size());
-		constantBuffer.upload(mat.data(), matSize);
+		auto matSize = static_cast<u32>(sizeof(float) * 16);
+		constantBuffer.upload(mat.data(), MAT_BYTE_SIZE);
 
 		cmdList.setPipelineState(pipeline);
 

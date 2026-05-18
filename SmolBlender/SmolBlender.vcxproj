@@ -150,6 +150,7 @@
     <ClInclude Include="EditorMainLoop.hpp" />
     <ClInclude Include="fwd.hpp" />
     <ClInclude Include="INC_Windows.h" />
+    <ClInclude Include="LinearAlgebra.hpp" />
     <ClInclude Include="MainLoop.hpp" />
     <ClInclude Include="OS.hpp" />
     <ClInclude Include="Util.hpp" />

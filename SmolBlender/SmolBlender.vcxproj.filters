@@ -92,6 +92,9 @@
     <ClInclude Include="Vertex.hpp">
       <Filter>헤더 파일</Filter>
     </ClInclude>
+    <ClInclude Include="LinearAlgebra.hpp">
+      <Filter>헤더 파일</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="ps.hlsl">
