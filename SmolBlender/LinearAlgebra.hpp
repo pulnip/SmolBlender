@@ -414,7 +414,7 @@ namespace Smol
     inline Vec4 normalize(Vec4 v) {
         return v / norm(v);
     }
-    inline constexpr Vec4 quat(Vec4 lhs, Vec4 rhs) {
+    inline constexpr Vec4 quatMul(Vec4 lhs, Vec4 rhs) {
         return Vec4{
             lhs.w * rhs.x + lhs.x * rhs.w + lhs.y * rhs.z - lhs.z * rhs.y,
             lhs.w * rhs.y - lhs.x * rhs.z + lhs.y * rhs.w + lhs.z * rhs.x,
@@ -422,7 +422,7 @@ namespace Smol
             lhs.w * rhs.w - lhs.x * rhs.x - lhs.y * rhs.y - lhs.z * rhs.z
         };
     }
-    inline Vec4 quat(Vec3 r, Vec3 u, Vec3 f) {
+    inline Vec4 toQuat(Vec3 r, Vec3 u, Vec3 f) {
         float m00 = r.x, m01 = u.x, m02 = f.x;
         float m10 = r.y, m11 = u.y, m12 = f.y;
         float m20 = r.z, m21 = u.z, m22 = f.z;
@@ -489,12 +489,6 @@ namespace Smol
             std::cos(half)
         };
     }
-    inline auto yaw(Vec4 quat) {
-        float siny_cosp = 2 * (quat.w * quat.y + quat.x * quat.z);
-        float cosy_cosp = 1 - 2 * (quat.y * quat.y + quat.x * quat.x);
-        float theta = std::atan2(siny_cosp, cosy_cosp);
-        return rotateY(theta);
-    }
     inline auto axisAngle(Vec3 axis, float radian) {
         auto half = radian / 2;
         float s = std::sin(half);
@@ -506,40 +500,7 @@ namespace Smol
         };
     }
     inline constexpr auto rotate(Vec4 v, Vec4 q) {
-        return quat(quat(q, v), conjugate(q));
-    }
-    inline constexpr auto rotate(Vec3 v, Vec4 q) {
-        Vec4 r = rotate(static_cast<Vec4>(v), q);
-        return static_cast<Vec3>(r);
-    }
-
-    inline constexpr auto right(Vec4 q) {
-        auto e_x = Vec4{ 1.0f, 0.0f, 0.0f, 0.0f };
-        auto r = rotate(e_x, q);
-        return static_cast<Vec3>(r);
-    }
-    inline constexpr auto groundRight(Vec4 quat) {
-        auto f = right(quat);
-        return f - dot(f, unitY()) * unitY();
-    }
-    inline constexpr auto up(Vec4 q) {
-        auto e_y = Vec4{ 0.0f, 1.0f, 0.0f, 0.0f };
-        auto r = rotate(e_y, q);
-        return static_cast<Vec3>(r);
-    }
-    inline constexpr auto forward(Vec4 q) {
-        auto e_z = Vec4{ 0.0f, 0.0f, 1.0f, 0.0f };
-        auto r = rotate(e_z, q);
-        return static_cast<Vec3>(r);
-    }
-    inline constexpr auto groundForward(Vec4 quat) {
-        auto f = forward(quat);
-        return f - dot(f, unitY()) * unitY();
-    }
-
-    inline constexpr auto operator==(Vec4 lhs, Vec4 rhs) {
-        return lhs.x == rhs.x && lhs.y == rhs.y &&
-            lhs.z == rhs.z && lhs.w == rhs.w;
+        return quatMul(quatMul(q, v), conjugate(q));
     }
 
     // expected multiplication form
@@ -617,39 +578,6 @@ namespace Smol
             Vec4{0.0f, 0.0f,  s.z, 0.0f},
             Vec4{0.0f, 0.0f, 0.0f, 1.0f}
         };
-    }
-
-    inline constexpr auto modelMat(Vec3 pos, Vec4 q, Vec3 scale) {
-        auto t = translateMat(pos);
-        auto r = rotateMat(q);
-        auto s = scaleMat(scale);
-
-        return t * r * s;
-    }
-
-    inline constexpr auto viewMat(Vec3 pos, Vec4 q) {
-        auto inv = conjugate(q);
-
-        auto r = rotateMat(inv);
-        auto t = translateMat(-pos);
-
-        return r * t;
-    }
-
-    inline constexpr bool overlap(
-        float m1, float M1,
-        float m2, float M2,
-        float epsilon = 0
-    ) {
-        assert(epsilon >= 0);
-        if (m1 > m2) {
-            std::swap(m1, m2);
-            std::swap(M1, M2);
-        }
-
-        if (M1 < m2 - epsilon)
-            return false;
-        return true;
     }
 
     inline constexpr double toRadian(double degree) noexcept {
