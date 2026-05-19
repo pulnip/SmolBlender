@@ -5,6 +5,8 @@
 #include "fwd.hpp"
 #include "D3D11Device.hpp"
 
+extern LRESULT CALLBACK MyWndProc(HWND, UINT, WPARAM, LPARAM);
+
 namespace Smol
 {
 	struct WindowConfig {
@@ -34,7 +36,6 @@ namespace Smol
 
 		Timer timer;
 
-		
 		struct MouseState {
 			i32 x = 0, y = 0;
 			i32 dx = 0, dy = 0;
@@ -54,6 +55,11 @@ namespace Smol
 		HWND getWindow() const { return hwnd; }
 		u32 getWidth() const { return width; }
 		u32 getHeight() const {	return height; }
+
+		MouseState getMouse() const { return mouse; }
+
+	private:
+		friend LRESULT CALLBACK ::MyWndProc(HWND, UINT, WPARAM, LPARAM);
 
 		void onMouseMove(i32 x, i32 y) {
 			mouse.dx += x - mouse.x;
@@ -75,7 +81,6 @@ namespace Smol
 			mouse.dx = mouse.dy = 0;
 			mouse.midPressed = mouse.midReleased = false;
 		}
-		const MouseState& getMouse() const { return mouse; }
 	};
 }
 
