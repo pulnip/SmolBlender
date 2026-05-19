@@ -14,10 +14,16 @@ namespace Smol
 		, cmdList(device.createCommandList()) {}
 
 	void EditorMainLoop::initialize() {
+		D3D11_RASTERIZER_DESC rasterizerDesc = DEFAULT_RASTERIZER_DESC;
+		// rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		rasterizerDesc.DepthClipEnable = FALSE;
+
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
 			.inputElementDescs = VERTEX1_INPUT_LAYOUT,
 			.vertexShaderPath = L"vs.hlsl",
 			.vertexShaderEntryPoint = "vs_main1",
+			.rasterizerState = rasterizerDesc,
 			.pixelShaderPath = L"ps.hlsl",
 			.pixelShaderEntryPoint = "ps_main"
 		});
@@ -45,11 +51,13 @@ namespace Smol
 	}
 
 	void EditorMainLoop::processInput() {
-		const auto mouse = OS_.getMouse();
+		auto m = OS_.getMouse();
 
-		bool isMouseMoved = mouse.dx != 0 || mouse.dy != 0;
-		if (mouse.midDown && isMouseMoved) {
-			mat = mat * rotateZMat(std::sqrt(mouse.dx * mouse.dx + mouse.dy * mouse.dy) / 100);
+		bool isMouseMoved = m.dx != 0 || m.dy != 0;
+		if (m.midDown && isMouseMoved) {
+			Vec2 mv = normalize(Vec2(-m.dy, -m.dx));
+			Vec4 delta = axisAngle(toVec3(mv), 0.1);
+			rotation = normalize(quatMul(delta, rotation));
 		}
 	}
 
@@ -66,7 +74,7 @@ namespace Smol
 			&clearColor
 		);
 
-		auto matSize = static_cast<u32>(sizeof(float) * 16);
+		Mat4 mat = rotateMat(rotation);
 		constantBuffer.upload(mat.data(), MAT_BYTE_SIZE);
 
 		cmdList.setPipelineState(pipeline);

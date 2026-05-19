@@ -18,8 +18,8 @@ namespace Smol {
 		D3D11GraphicsPipelineState pipeline;
 
 		D3D11Buffer vertexBuffer;
-		
-		Mat4 mat = unitMat();
+
+		Vec4 rotation = unitQuat();
 		D3D11Buffer constantBuffer;
 
 	public:
