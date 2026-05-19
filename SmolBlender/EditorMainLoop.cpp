@@ -55,8 +55,8 @@ namespace Smol
 
 		bool isMouseMoved = m.dx != 0 || m.dy != 0;
 		if (m.midDown && isMouseMoved) {
-			Vec2 mv = normalize(Vec2(-m.dy, -m.dx));
-			Vec4 delta = axisAngle(toVec3(mv), 0.1);
+			Vec2 mv(-m.dy, -m.dx);
+			Vec4 delta = axisAngle(toVec3(normalize(mv)), norm(mv)/100);
 			rotation = normalize(quatMul(delta, rotation));
 		}
 	}
