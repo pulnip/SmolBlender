@@ -54,7 +54,7 @@ namespace Smol
 		auto m = OS_.getMouse();
 
 		bool isMouseMoved = m.dx != 0 || m.dy != 0;
-		if (m.midDown && isMouseMoved) {
+		if (m.leftDown && isMouseMoved) {
 			Vec2 mv(-m.dy, -m.dx);
 			Vec4 delta = axisAngle(toVec3(normalize(mv)), norm(mv)/100);
 			rotation = normalize(quatMul(delta, rotation));

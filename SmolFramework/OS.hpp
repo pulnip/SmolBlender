@@ -39,8 +39,8 @@ namespace Smol
 		struct MouseState {
 			i32 x = 0, y = 0;
 			i32 dx = 0, dy = 0;
-			bool midDown = false;
-			bool midPressed = false, midReleased = false;
+			bool leftDown = false;
+			bool leftPressed = false, leftReleased = false;
 		} mouse;
 
 	public:
@@ -67,19 +67,19 @@ namespace Smol
 			mouse.x = x;
 			mouse.y = y;
 		}
-		void onMidDown(int x, int y) {
-			mouse.midDown = true;
-			mouse.midPressed = true;
+		void onMouseLeftDown(int x, int y) {
+			mouse.leftDown = true;
+			mouse.leftPressed = true;
 			mouse.x = x;
 			mouse.y = y;
 		}
-		void onMidUp(int x, int y) {
-			mouse.midDown = false;
-			mouse.midReleased = true;
+		void onMouseLeftUp(int x, int y) {
+			mouse.leftDown = false;
+			mouse.leftReleased = true;
 		}
 		void consumeFrameInput() {
 			mouse.dx = mouse.dy = 0;
-			mouse.midPressed = mouse.midReleased = false;
+			mouse.leftPressed = mouse.leftReleased = false;
 		}
 	};
 }

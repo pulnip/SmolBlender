@@ -12,13 +12,13 @@ LRESULT CALLBACK MyWndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
 	case WM_MOUSEMOVE: {
 		OS_.onMouseMove(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	} break;
-	case WM_MBUTTONDOWN: {
+	case WM_LBUTTONDOWN: {
 		SetCapture(hwnd);
-		OS_.onMidDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		OS_.onMouseLeftDown(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	} break;
-	case WM_MBUTTONUP: {
+	case WM_LBUTTONUP: {
 		ReleaseCapture();
-		OS_.onMidUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+		OS_.onMouseLeftUp(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
 	} break;
 	default:
 		return DefWindowProc(hwnd, msg, wParam, lParam);
