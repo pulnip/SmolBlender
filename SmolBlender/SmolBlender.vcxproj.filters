@@ -46,5 +46,8 @@
     <FxCompile Include="ps0.hlsl">
       <Filter>리소스 파일</Filter>
     </FxCompile>
+    <FxCompile Include="vs2.hlsl">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

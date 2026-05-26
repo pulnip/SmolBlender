@@ -20,31 +20,41 @@ namespace Smol
 		rasterizerDesc.DepthClipEnable = FALSE;
 
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
-			.inputElementDescs = VERTEX1_INPUT_LAYOUT,
-			.vertexShaderPath = L"vs1.hlsl",
+			.inputElementDescs = VERTEX2_INPUT_LAYOUT,
+			.primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
+			.vertexShaderPath = L"vs2.hlsl",
 			.vertexShaderEntryPoint = "vs_main",
 			.rasterizerState = rasterizerDesc,
 			.pixelShaderPath = L"ps1.hlsl",
 			.pixelShaderEntryPoint = "ps_main"
 		});
 
-		using enum BufferUsage;
-
-		
-		auto x = 0.8f * std::sqrtf(3)/2;
-		// Counter-Clockwise for index buffer test
 		std::array vertices = {
-			Vertex1{.position = {0.0f,  0.8f}, .color = {1, 0, 0, 1}},
-			Vertex1{.position = {  -x, -0.4f}, .color = {0, 1, 0, 1}},
-			Vertex1{.position = {   x, -0.4f}, .color = {0, 0, 1, 1}}
+			Vertex2{.position = {-0.5f,  -0.5f, -0.5f}, .color = {1, 1, 1, 1}},
+			Vertex2{.position = { 0.5f,  -0.5f, -0.5f}, .color = {0, 1, 1, 1}},
+			Vertex2{.position = {-0.5f,   0.5f, -0.5f}, .color = {1, 0, 1, 1}},
+			Vertex2{.position = { 0.5f,   0.5f, -0.5f}, .color = {0, 0, 1, 1}},
+			Vertex2{.position = {-0.5f,  -0.5f,  0.5f}, .color = {0, 0, 0, 1}},
+			Vertex2{.position = { 0.5f,  -0.5f,  0.5f}, .color = {1, 0, 0, 1}},
+			Vertex2{.position = {-0.5f,   0.5f,  0.5f}, .color = {0, 1, 0, 1}},
+			Vertex2{.position = { 0.5f,   0.5f,  0.5f}, .color = {1, 1, 0, 1}}
 		};
 
 		// Notice! Clockwise for front face
-		std::array<u16, 3> indices = { 1, 0, 2 };
+		std::array<u16, 36> indices = {
+			0, 2, 1, 1, 2, 3, // front
+			0, 1, 4, 1, 5, 4, // bottom
+			0, 6, 2, 0, 4, 6, // left
+			1, 3, 5, 3, 7, 5, // right
+			2, 7, 3, 6, 7, 2, // top
+			4, 5, 6, 5, 7, 6  // back
+		};
 		numIndices = indices.size();
 
+		using enum BufferUsage;
+
 		vertexBuffer = device.createBuffer(BufferConfig{
-			.size = sizeof(Vertex1) * vertices.size(),
+			.size = sizeof(Vertex2) * vertices.size(),
 			.usage = BufferUsage::VertexBuffer,
 			.initialData = vertices.data()
 		}, "Smol Vertex Buffer");
@@ -99,7 +109,7 @@ namespace Smol
 
 		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
-		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
+		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex2));
 		cmdList.setIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT);
 		// cmdList.draw(numVertices);
 		cmdList.drawIndexed(numIndices);
