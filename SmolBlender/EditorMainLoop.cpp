@@ -14,7 +14,7 @@ namespace Smol
 		, cmdList(device.createCommandList()) {}
 
 	void EditorMainLoop::initialize() {
-		D3D11_RASTERIZER_DESC rasterizerDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
+		D3D11_RASTERIZER_DESC rasterizerDesc = DEFAULT_RASTERIZER_DESC;
 		// rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 		rasterizerDesc.CullMode = D3D11_CULL_NONE;
 		rasterizerDesc.DepthClipEnable = FALSE;
