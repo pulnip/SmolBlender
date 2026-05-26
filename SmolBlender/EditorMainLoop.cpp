@@ -44,7 +44,7 @@ namespace Smol
 			.initialData = vertices.data()
 		}, "Vertex Buffer");
 		constantBuffer = device.createBuffer(BufferConfig{
-			.size = MAT_BYTE_SIZE,
+			.size = sizeof(Mat4),
 			.usage = BufferUsage::ConstantBuffer,
 			.access = MemoryAccess::CPUWrite
 		}, "Constant Buffer");
@@ -75,7 +75,7 @@ namespace Smol
 		);
 
 		Mat4 mat = rotateMat(rotation);
-		constantBuffer.upload(mat.data(), MAT_BYTE_SIZE);
+		constantBuffer.upload(mat.data(), sizeof(mat));
 
 		cmdList.setPipelineState(pipeline);
 

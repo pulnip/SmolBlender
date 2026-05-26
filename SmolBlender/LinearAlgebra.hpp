@@ -133,7 +133,7 @@ namespace Smol
     // column-major matrix
     using Mat4 = std::array<Vec4, 4>;
     static_assert(std::is_trivially_copyable_v<Mat4>);
-    constexpr auto MAT_BYTE_SIZE = sizeof(float) * 16;
+    static_assert(sizeof(Mat4) == sizeof(float) * 16);
 
     inline constexpr Vec2 operator+(Vec2 lhs, Vec2 rhs) {
         return { lhs.x + rhs.x, lhs.y + rhs.y };
