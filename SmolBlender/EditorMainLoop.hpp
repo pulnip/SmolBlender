@@ -19,7 +19,7 @@ namespace Smol {
 
 		D3D11GraphicsPipelineState pipeline;
 
-		std::vector<Vertex1> vertices;
+		u32 numVertices = 0;
 		D3D11Buffer vertexBuffer;
 
 		Vec4 rotation = unitQuat();

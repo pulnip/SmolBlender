@@ -32,11 +32,12 @@ namespace Smol
 
 		// Notice! Clockwise for front face
 		auto x = 0.8f * std::sqrtf(3)/2;
-		vertices = {
+		std::array vertices = {
 			Vertex1{.position = {  -x, -0.4f}, .color = {1, 0, 0, 1}},
 			Vertex1{.position = {0.0f,  0.8f}, .color = {0, 1, 0, 1}},
 			Vertex1{.position = {   x, -0.4f}, .color = {0, 0, 1, 1}}
 		};
+		numVertices = vertices.size();
 		
 		vertexBuffer = device.createBuffer(BufferConfig{
 			.size = sizeof(Vertex1) * vertices.size(),
@@ -89,7 +90,7 @@ namespace Smol
 		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
 		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
-		cmdList.draw(vertices.size());
+		cmdList.draw(numVertices);
 
 		cmdList.endRenderPass();
 		cmdList.close();
