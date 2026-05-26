@@ -44,9 +44,9 @@ namespace Smol
 		std::array<u16, 36> indices = {
 			0, 2, 1, 1, 2, 3, // front
 			0, 1, 4, 1, 5, 4, // bottom
-			0, 6, 2, 0, 4, 6, // left
+			0, 4, 2, 4, 6, 2, // left
 			1, 3, 5, 3, 7, 5, // right
-			2, 7, 3, 6, 7, 2, // top
+			3, 2, 6, 3, 6, 7, // top
 			4, 5, 6, 5, 7, 6  // back
 		};
 		numIndices = indices.size();
