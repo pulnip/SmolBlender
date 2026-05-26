@@ -9,7 +9,7 @@ namespace Smol
 		Device& device,
 		DeviceContext& context,
 		const BufferConfig& cfg,
-		const std::string& name
+		std::string_view name
 	)
 		: context(&context)
 		, size(static_cast<u32>(cfg.size))
@@ -64,7 +64,7 @@ namespace Smol
 			buffer->SetPrivateData(
 				WKPDID_D3DDebugObjectName,
 				static_cast<UINT>(name.length()),
-				name.c_str()
+				name.data()
 			);
 		}
 #endif

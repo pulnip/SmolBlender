@@ -20,7 +20,7 @@ namespace Smol
 
 	public:
 		D3D11Swapchain() = default;
-		D3D11Swapchain(Device&, Factory&, const SwapchainConfig&);
+		D3D11Swapchain(Device&, Factory&, const SwapchainConfig&, std::string_view name = {});
 		~D3D11Swapchain() = default;
 
 		DECLARE_MOVE_ONLY(D3D11Swapchain)

@@ -20,7 +20,7 @@ namespace Smol
 
 	public:
 		D3D11Texture() = default;
-		D3D11Texture(Device&, DeviceContext&, const TextureConfig&, const std::string& name);
+		D3D11Texture(Device&, DeviceContext&, const TextureConfig&, std::string_view name = {});
 		~D3D11Texture() = default;
 
 		DECLARE_MOVE_ONLY(D3D11Texture)

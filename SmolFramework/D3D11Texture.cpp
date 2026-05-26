@@ -18,7 +18,7 @@ namespace Smol
 		Device& device,
 		DeviceContext& context,
 		const TextureConfig& cfg,
-		const std::string& name
+		std::string_view name
 	)
 		: context(&context)
 		, width(cfg.width), height(cfg.height)
@@ -73,7 +73,7 @@ namespace Smol
 			texture->SetPrivateData(
 				WKPDID_D3DDebugObjectName,
 				static_cast<UINT>(name.length()),
-				name.c_str()
+				name.data()
 			);
 		}
 #endif

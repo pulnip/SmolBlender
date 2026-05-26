@@ -192,23 +192,23 @@ namespace Smol
 		return D3D11CommandList(*device.Get(), *context.Get());
 	}
 
-	D3D11Swapchain D3D11Device::createSwapchain(const SwapchainConfig& cfg) {
-		return D3D11Swapchain(*device.Get(), *factory.Get(), cfg);
+	D3D11Swapchain D3D11Device::createSwapchain(const SwapchainConfig& cfg, std::string_view name) {
+		return D3D11Swapchain(*device.Get(), *factory.Get(), cfg, name);
 	}
 
 	D3D11GraphicsPipelineState D3D11Device::createPipelineState(const GraphicsPipelineConfig& cfg) {
 		return D3D11GraphicsPipelineState(*device.Get(), cfg);
 	}
 
-	D3D11Buffer D3D11Device::createBuffer(const BufferConfig& cfg, const std::string& name) {
+	D3D11Buffer D3D11Device::createBuffer(const BufferConfig& cfg, std::string_view name) {
 		return D3D11Buffer(*device.Get(), *context.Get(), cfg, name);
 	}
 
-	D3D11Texture D3D11Device::createTexture(const TextureConfig& cfg, const std::string& name) {
+	D3D11Texture D3D11Device::createTexture(const TextureConfig& cfg, std::string_view name) {
 		return D3D11Texture(*device.Get(), *context.Get(), cfg, name);
 	}
 
-	D3D11Sampler D3D11Device::createSampler(const SamplerConfig& cfg, const std::string& name) {
+	D3D11Sampler D3D11Device::createSampler(const SamplerConfig& cfg, std::string_view name) {
 		return D3D11Sampler(*device.Get(), cfg, name);
 	}
 

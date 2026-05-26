@@ -11,7 +11,7 @@ namespace Smol
 
 	public:
 		D3D11Sampler() = default;
-		D3D11Sampler(Device&, const SamplerConfig&, const std::string& name);
+		D3D11Sampler(Device&, const SamplerConfig&, std::string_view name = {});
 		~D3D11Sampler() = default;
 
 		DECLARE_MOVE_ONLY(D3D11Sampler)

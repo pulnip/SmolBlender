@@ -18,7 +18,7 @@ namespace Smol
 
 	public:
 		D3D11Buffer() = default;
-		D3D11Buffer(Device&, DeviceContext&, const BufferConfig&, const std::string& name);
+		D3D11Buffer(Device&, DeviceContext&, const BufferConfig&, std::string_view name = {});
 		~D3D11Buffer() = default;
 
 		DECLARE_MOVE_ONLY(D3D11Buffer)

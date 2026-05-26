@@ -5,7 +5,8 @@ namespace Smol
 	D3D11Swapchain::D3D11Swapchain(
 		Device& device,
 		Factory& factory,
-		const SwapchainConfig& cfg
+		const SwapchainConfig& cfg,
+        std::string_view name
 	)
 		: device(&device)
 		, width(cfg.width), height(cfg.height)
@@ -38,11 +39,11 @@ namespace Smol
         createBackBuffer();
 
 #if defined(_DEBUG) || !defined(NDEBUG)
-        if (!cfg.debugName.empty()) {
+        if (!name.empty()) {
             swapchain->SetPrivateData(
                 WKPDID_D3DDebugObjectName,
-                static_cast<UINT>(cfg.debugName.length()),
-                cfg.debugName.c_str()
+                static_cast<UINT>(name.length()),
+                name.data()
             );
         }
 #endif

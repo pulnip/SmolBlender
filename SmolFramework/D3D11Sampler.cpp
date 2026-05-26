@@ -6,7 +6,7 @@ namespace Smol
 	D3D11Sampler::D3D11Sampler(
 		Device& device,
 		const SamplerConfig& cfg,
-		const std::string& name
+		std::string_view name
 	)
 	{
 		const D3D11_SAMPLER_DESC desc = {
@@ -30,7 +30,7 @@ namespace Smol
 			sampler->SetPrivateData(
 				WKPDID_D3DDebugObjectName,
 				static_cast<UINT>(name.length()),
-				name.c_str()
+				name.data()
 			);
 		}
 #endif

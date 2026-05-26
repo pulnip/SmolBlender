@@ -80,10 +80,6 @@ namespace Smol
 		u32 bufferCount = RHI_FRAMES_IN_FLIGHT;     // Triple buffering
 		bool vsync = true;                               // VSync enabled by default
 		bool allowTearing = false;                       // Variable refresh rate
-
-#if defined(_DEBUG) || !defined(NDEBUG)
-		std::string debugName = "Swapchain";
-#endif
 	};
 
 	// same as CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT)
