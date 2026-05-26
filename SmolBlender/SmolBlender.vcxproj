@@ -76,8 +76,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -92,8 +93,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -106,8 +108,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -122,8 +125,9 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <LanguageStandard>stdcpplatest</LanguageStandard>
+      <LanguageStandard>stdcpp23</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
@@ -131,33 +135,12 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClCompile Include="D3D11Buffer.cpp" />
-    <ClCompile Include="D3D11CommandList.cpp" />
-    <ClCompile Include="D3D11Device.cpp" />
-    <ClCompile Include="D3D11PipelineState.cpp" />
-    <ClCompile Include="D3D11Sampler.cpp" />
-    <ClCompile Include="D3D11Swapchain.cpp" />
-    <ClCompile Include="D3D11Texture.cpp" />
     <ClCompile Include="EditorMainLoop.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="OS.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="D3D11Buffer.hpp" />
-    <ClInclude Include="D3D11CommandList.hpp" />
-    <ClInclude Include="D3D11Definitions.hpp" />
-    <ClInclude Include="D3D11Device.hpp" />
-    <ClInclude Include="D3D11PipelineState.hpp" />
-    <ClInclude Include="D3D11Sampler.hpp" />
-    <ClInclude Include="D3D11Swapchain.hpp" />
-    <ClInclude Include="D3D11Texture.hpp" />
     <ClInclude Include="EditorMainLoop.hpp" />
-    <ClInclude Include="fwd.hpp" />
-    <ClInclude Include="INC_Windows.h" />
     <ClInclude Include="LinearAlgebra.hpp" />
-    <ClInclude Include="MainLoop.hpp" />
-    <ClInclude Include="OS.hpp" />
-    <ClInclude Include="Util.hpp" />
     <ClInclude Include="Vertex.hpp" />
   </ItemGroup>
   <ItemGroup>
@@ -173,6 +156,11 @@
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </FxCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\SmolFramework\SmolFramework.vcxproj">
+      <Project>{adb23d97-8b13-459d-8220-024ab4ccaeb0}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
