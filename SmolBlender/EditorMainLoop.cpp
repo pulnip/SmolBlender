@@ -14,7 +14,7 @@ namespace Smol
 		, cmdList(device.createCommandList()) {}
 
 	void EditorMainLoop::initialize() {
-		D3D11_RASTERIZER_DESC rasterizerDesc = DEFAULT_RASTERIZER_DESC;
+		D3D11_RASTERIZER_DESC rasterizerDesc = CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT{});
 		// rasterizerDesc.FillMode = D3D11_FILL_SOLID;
 		rasterizerDesc.CullMode = D3D11_CULL_NONE;
 		rasterizerDesc.DepthClipEnable = FALSE;
@@ -30,11 +30,11 @@ namespace Smol
 
 		using enum BufferUsage;
 
-		// Notice! Counter-Clockwise for front face
+		// Notice! Clockwise for front face
 		auto x = 0.8f * std::sqrtf(3)/2;
-		std::array vertices = {
-			Vertex1{.position = {0.0f,  0.8f}, .color = {1, 0, 0, 1}},
-			Vertex1{.position = {  -x, -0.4f}, .color = {0, 1, 0, 1}},
+		vertices = {
+			Vertex1{.position = {  -x, -0.4f}, .color = {1, 0, 0, 1}},
+			Vertex1{.position = {0.0f,  0.8f}, .color = {0, 1, 0, 1}},
 			Vertex1{.position = {   x, -0.4f}, .color = {0, 0, 1, 1}}
 		};
 		
@@ -89,7 +89,7 @@ namespace Smol
 		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
 		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
-		cmdList.draw(3);
+		cmdList.draw(vertices.size());
 
 		cmdList.endRenderPass();
 		cmdList.close();

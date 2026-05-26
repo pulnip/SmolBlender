@@ -86,13 +86,14 @@ namespace Smol
 #endif
 	};
 
+	// same as CD3D11_RASTERIZER_DESC(CD3D11_DEFAULT)
 	constexpr D3D11_RASTERIZER_DESC DEFAULT_RASTERIZER_DESC{
 		.FillMode = D3D11_FILL_SOLID,
 		.CullMode = D3D11_CULL_BACK,
-		.FrontCounterClockwise = TRUE,
-		.DepthBias = 0,
-		.DepthBiasClamp = 0.0f,
-		.SlopeScaledDepthBias = 0.0f,
+		.FrontCounterClockwise = FALSE,
+		.DepthBias = D3D11_DEFAULT_DEPTH_BIAS,
+		.DepthBiasClamp = D3D11_DEFAULT_DEPTH_BIAS_CLAMP,
+		.SlopeScaledDepthBias = D3D11_DEFAULT_SLOPE_SCALED_DEPTH_BIAS,
 		.DepthClipEnable = TRUE,
 		.ScissorEnable = FALSE,
 		.MultisampleEnable = FALSE,

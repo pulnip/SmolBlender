@@ -1,10 +1,12 @@
 #pragma once
 
 #include <memory>
+#include <vector>
 
 #include "LinearAlgebra.hpp"
 #include "MainLoop.hpp"
 #include "Util.hpp"
+#include "Vertex.hpp"
 
 #include "D3D11Device.hpp"
 
@@ -17,6 +19,7 @@ namespace Smol {
 
 		D3D11GraphicsPipelineState pipeline;
 
+		std::vector<Vertex1> vertices;
 		D3D11Buffer vertexBuffer;
 
 		Vec4 rotation = unitQuat();
