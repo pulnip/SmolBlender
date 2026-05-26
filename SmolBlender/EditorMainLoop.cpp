@@ -21,10 +21,10 @@ namespace Smol
 
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
 			.inputElementDescs = VERTEX1_INPUT_LAYOUT,
-			.vertexShaderPath = L"vs.hlsl",
-			.vertexShaderEntryPoint = "vs_main1",
+			.vertexShaderPath = L"vs1.hlsl",
+			.vertexShaderEntryPoint = "vs_main",
 			.rasterizerState = rasterizerDesc,
-			.pixelShaderPath = L"ps.hlsl",
+			.pixelShaderPath = L"ps1.hlsl",
 			.pixelShaderEntryPoint = "ps_main"
 		});
 
