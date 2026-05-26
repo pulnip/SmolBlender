@@ -15,55 +15,46 @@ namespace Smol
 
 	void EditorMainLoop::initialize() {
 		D3D11_RASTERIZER_DESC rasterizerDesc = DEFAULT_RASTERIZER_DESC;
-		// enable culling for winding order test
-		rasterizerDesc.CullMode = D3D11_CULL_BACK;
+		// rasterizerDesc.FillMode = D3D11_FILL_SOLID;
+		rasterizerDesc.CullMode = D3D11_CULL_NONE;
 		rasterizerDesc.DepthClipEnable = FALSE;
 
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
-			.inputElementDescs = VERTEX2_INPUT_LAYOUT,
-			.primitiveTopology = D3D11_PRIMITIVE_TOPOLOGY_TRIANGLELIST,
-			.vertexShaderPath = L"vs2.hlsl",
+			.inputElementDescs = VERTEX1_INPUT_LAYOUT,
+			.vertexShaderPath = L"vs1.hlsl",
 			.vertexShaderEntryPoint = "vs_main",
 			.rasterizerState = rasterizerDesc,
 			.pixelShaderPath = L"ps1.hlsl",
 			.pixelShaderEntryPoint = "ps_main"
 		});
-
+		
 		std::array vertices = {
-			Vertex2{.position = {-0.5f,  -0.5f, -0.5f}, .color = {1, 1, 1, 1}},
-			Vertex2{.position = { 0.5f,  -0.5f, -0.5f}, .color = {0, 1, 1, 1}},
-			Vertex2{.position = {-0.5f,   0.5f, -0.5f}, .color = {1, 0, 1, 1}},
-			Vertex2{.position = { 0.5f,   0.5f, -0.5f}, .color = {0, 0, 1, 1}},
-			Vertex2{.position = {-0.5f,  -0.5f,  0.5f}, .color = {0, 0, 0, 1}},
-			Vertex2{.position = { 0.5f,  -0.5f,  0.5f}, .color = {1, 0, 0, 1}},
-			Vertex2{.position = {-0.5f,   0.5f,  0.5f}, .color = {0, 1, 0, 1}},
-			Vertex2{.position = { 0.5f,   0.5f,  0.5f}, .color = {1, 1, 0, 1}}
+			Vertex1{.position = {-0.5f,  -0.5f}, .color = {1, 0, 0, 1}},
+			Vertex1{.position = {-0.5f,   0.5f}, .color = {0, 1, 0, 1}},
+			Vertex1{.position = { 0.5f,   0.5f}, .color = {1, 1, 1, 1}},
+			Vertex1{.position = { 0.5f,  -0.5f}, .color = {0, 0, 1, 1}},
 		};
-
 		// Notice! Clockwise for front face
-		std::array<u16, 36> indices = {
-			0, 2, 1, 1, 2, 3, // front
-			0, 1, 4, 1, 5, 4, // bottom
-			0, 4, 2, 4, 6, 2, // left
-			1, 3, 5, 3, 7, 5, // right
-			3, 2, 6, 3, 6, 7, // top
-			4, 5, 6, 5, 7, 6  // back
+		std::array<uint16_t, 6> indices = {
+			// Top-Left Triangle
+			0, 1, 2,
+			// Bottom-Right Triangle
+			0, 2, 3
 		};
 		numIndices = indices.size();
 
 		using enum BufferUsage;
-
+		
 		vertexBuffer = device.createBuffer(BufferConfig{
-			.size = sizeof(Vertex2) * vertices.size(),
+			.size = sizeof(Vertex1) * vertices.size(),
 			.usage = BufferUsage::VertexBuffer,
 			.initialData = vertices.data()
 		}, "Smol Vertex Buffer");
 		indexBuffer = device.createBuffer(BufferConfig{
-			.size = sizeof(u16) * indices.size(),
+			.size = sizeof(uint16_t) * indices.size(),
 			.usage = BufferUsage::IndexBuffer,
 			.initialData = indices.data()
 		}, "Smol Index Buffer");
-
 		constantBuffer = device.createBuffer(BufferConfig{
 			.size = sizeof(Mat4),
 			.usage = BufferUsage::ConstantBuffer,
@@ -109,9 +100,8 @@ namespace Smol
 
 		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
-		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex2));
+		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
 		cmdList.setIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT);
-		// cmdList.draw(numVertices);
 		cmdList.drawIndexed(numIndices);
 
 		cmdList.endRenderPass();
