@@ -10,13 +10,13 @@ namespace Smol
 {
 	EditorMainLoop::EditorMainLoop(const SwapchainConfig& cfg)
 		: device()
-		, swapchain(device.createSwapchain(cfg))
+		, swapchain(device.createSwapchain(cfg, "Smol Swapchain"))
 		, cmdList(device.createCommandList()) {}
 
 	void EditorMainLoop::initialize() {
 		D3D11_RASTERIZER_DESC rasterizerDesc = DEFAULT_RASTERIZER_DESC;
-		// rasterizerDesc.FillMode = D3D11_FILL_SOLID;
-		rasterizerDesc.CullMode = D3D11_CULL_NONE;
+		// enable culling for winding order test
+		rasterizerDesc.CullMode = D3D11_CULL_BACK;
 		rasterizerDesc.DepthClipEnable = FALSE;
 
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
@@ -30,25 +30,35 @@ namespace Smol
 
 		using enum BufferUsage;
 
-		// Notice! Clockwise for front face
+		
 		auto x = 0.8f * std::sqrtf(3)/2;
+		// Counter-Clockwise for index buffer test
 		std::array vertices = {
-			Vertex1{.position = {  -x, -0.4f}, .color = {1, 0, 0, 1}},
-			Vertex1{.position = {0.0f,  0.8f}, .color = {0, 1, 0, 1}},
+			Vertex1{.position = {0.0f,  0.8f}, .color = {1, 0, 0, 1}},
+			Vertex1{.position = {  -x, -0.4f}, .color = {0, 1, 0, 1}},
 			Vertex1{.position = {   x, -0.4f}, .color = {0, 0, 1, 1}}
 		};
-		numVertices = vertices.size();
-		
+
+		// Notice! Clockwise for front face
+		std::array<u16, 3> indices = { 1, 0, 2 };
+		numIndices = indices.size();
+
 		vertexBuffer = device.createBuffer(BufferConfig{
 			.size = sizeof(Vertex1) * vertices.size(),
 			.usage = BufferUsage::VertexBuffer,
 			.initialData = vertices.data()
-		}, "Vertex Buffer");
+		}, "Smol Vertex Buffer");
+		indexBuffer = device.createBuffer(BufferConfig{
+			.size = sizeof(u16) * indices.size(),
+			.usage = BufferUsage::IndexBuffer,
+			.initialData = indices.data()
+		}, "Smol Index Buffer");
+
 		constantBuffer = device.createBuffer(BufferConfig{
 			.size = sizeof(Mat4),
 			.usage = BufferUsage::ConstantBuffer,
 			.access = MemoryAccess::CPUWrite
-		}, "Constant Buffer");
+		}, "Smol Constant Buffer");
 	}
 
 	void EditorMainLoop::processInput() {
@@ -90,7 +100,9 @@ namespace Smol
 		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
 		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
-		cmdList.draw(numVertices);
+		cmdList.setIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT);
+		// cmdList.draw(numVertices);
+		cmdList.drawIndexed(numIndices);
 
 		cmdList.endRenderPass();
 		cmdList.close();

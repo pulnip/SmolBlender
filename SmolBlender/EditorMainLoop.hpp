@@ -19,8 +19,9 @@ namespace Smol {
 
 		D3D11GraphicsPipelineState pipeline;
 
-		u32 numVertices = 0;
 		D3D11Buffer vertexBuffer;
+		u32 numIndices = 0;
+		D3D11Buffer indexBuffer;
 
 		Vec4 rotation = unitQuat();
 		D3D11Buffer constantBuffer;
