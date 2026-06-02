@@ -1,24 +1,11 @@
 
 #include <fstream>
 #include <d3dcompiler.h>
+#include "Util.hpp"
 #include "D3D11PipelineState.hpp"
 
 namespace
 {
-	std::vector<uint8_t> read_file_as_binary(const std::filesystem::path& path) {
-		std::ifstream file(path, std::ios::binary | std::ios::ate);
-		if (!file.is_open())
-			throw std::runtime_error("Failed to open file: " + path.string());
-
-		auto size = file.tellg();
-		file.seekg(0);
-
-		std::vector<uint8_t> buffer(size);
-		file.read(reinterpret_cast<char*>(buffer.data()), size);
-
-		return buffer;
-	}
-
 	struct CompiledShader {
 		std::vector<uint8_t> bytecode;
 
@@ -30,7 +17,7 @@ namespace
 			auto ext = std::filesystem::path(path).extension().string();
 
 			if (ext == ".cso" || ext == ".dxbc" || ext == ".dxil") {
-				bytecode = read_file_as_binary(path);
+				bytecode = Smol::readFileAsBinary(path);
 			}
 			else if (ext != ".hlsl") {
 				throw std::runtime_error("Unsupported shader file extension: " + ext);

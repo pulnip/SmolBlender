@@ -1,7 +1,9 @@
 #pragma once
 
 #include <cstdint>
+#include <filesystem>
 #include <type_traits>
+#include <vector>
 
 // copy - move semantics
 #define DECLARE_DEFAULT_COPYABLE(Type) \
@@ -77,4 +79,6 @@ namespace Smol
             static_cast<U>(first) | ... | static_cast<U>(rest)
         ));
     }
+
+    std::vector<u8> readFileAsBinary(const std::filesystem::path&);
 }

@@ -27,6 +27,7 @@
     <ClCompile Include="D3D11Swapchain.cpp" />
     <ClCompile Include="D3D11Texture.cpp" />
     <ClCompile Include="OS.cpp" />
+    <ClCompile Include="Util.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="D3D11Buffer.hpp" />
