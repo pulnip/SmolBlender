@@ -50,4 +50,9 @@
       <Filter>리소스 파일</Filter>
     </FxCompile>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="crates\crate1\crate1_diffuse.png">
+      <Filter>리소스 파일</Filter>
+    </Image>
+  </ItemGroup>
 </Project>

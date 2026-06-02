@@ -180,6 +180,9 @@
       <Project>{adb23d97-8b13-459d-8220-024ab4ccaeb0}</Project>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="crates\crate1\crate1_diffuse.png" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
