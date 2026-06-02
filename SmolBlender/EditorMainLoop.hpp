@@ -23,6 +23,9 @@ namespace Smol {
 		D3D11Buffer vertexBuffer;
 		D3D11Buffer indexBuffer;
 
+		D3D11Texture diffuseTexture;
+		D3D11Sampler sampler;
+
 		Vec4 rotation = unitQuat();
 		D3D11Buffer constantBuffer;
 

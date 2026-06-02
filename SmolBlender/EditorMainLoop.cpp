@@ -3,6 +3,7 @@
 #include "EditorMainLoop.hpp"
 
 #include "D3D11Device.hpp"
+#include "ImageLoader.hpp"
 #include "OS.hpp"
 #include "Vertex.hpp"
 
@@ -25,7 +26,7 @@ namespace Smol
 			.vertexShaderEntryPoint = "vs_main",
 			.rasterizerState = rasterizerDesc,
 			.pixelShaderPath = L"ps2.hlsl",
-			.pixelShaderEntryPoint = "ps_main"
+			.pixelShaderEntryPoint = "ps_textured"
 		});
 		
 		std::array vertices = {
@@ -42,6 +43,8 @@ namespace Smol
 			0, 2, 3
 		};
 		numIndices = indices.size();
+
+		ImageData image = loadImage(L"crates/crate1/crate1_diffuse.png");
 
 		using enum BufferUsage;
 		
@@ -60,6 +63,17 @@ namespace Smol
 			.usage = BufferUsage::ConstantBuffer,
 			.access = MemoryAccess::CPUWrite
 		}, "Smol Constant Buffer");
+
+		diffuseTexture = device.createTexture(TextureConfig{
+			.width = image.width, .height = image.height,
+			.format = DXGI_FORMAT_R8G8B8A8_UNORM,
+			.usage = TextureUsage::AllowShaderRead,
+			.initialData = image.pixels.data()
+		}, "Diffuse from Crate1");
+		sampler = device.createSampler(
+			LINEAR_WRAP_SAMPLER_CONFIG,
+			"Smol Sampler"
+		);
 	}
 
 	void EditorMainLoop::processInput() {
@@ -102,6 +116,10 @@ namespace Smol
 
 		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex3));
 		cmdList.setIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT);
+
+		cmdList.setTexture(diffuseTexture, 0, ShaderStage::PixelShader);
+		cmdList.setSampler(sampler, 0, ShaderStage::PixelShader);
+
 		cmdList.drawIndexed(numIndices);
 
 		cmdList.endRenderPass();
