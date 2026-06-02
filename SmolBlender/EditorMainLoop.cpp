@@ -20,13 +20,20 @@ namespace Smol
 		rasterizerDesc.CullMode = D3D11_CULL_NONE;
 		rasterizerDesc.DepthClipEnable = FALSE;
 
+		D3D11_BLEND_DESC blendDesc = DEFAULT_BLEND_DESC;
+		blendDesc.IndependentBlendEnable = FALSE;
+		blendDesc.RenderTarget[0].BlendEnable = TRUE;
+		blendDesc.RenderTarget[0].SrcBlend = D3D11_BLEND_SRC_ALPHA;
+		blendDesc.RenderTarget[0].DestBlend = D3D11_BLEND_INV_SRC_ALPHA;
+
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
 			.inputElementDescs = VERTEX3_INPUT_LAYOUT,
 			.vertexShaderPath = L"vs3.hlsl",
 			.vertexShaderEntryPoint = "vs_main",
 			.rasterizerState = rasterizerDesc,
 			.pixelShaderPath = L"ps2.hlsl",
-			.pixelShaderEntryPoint = "ps_textured"
+			.pixelShaderEntryPoint = "ps_textured",
+			.blendState = blendDesc
 		});
 		
 		std::array vertices = {
@@ -44,7 +51,7 @@ namespace Smol
 		};
 		numIndices = indices.size();
 
-		ImageData image = loadImage(L"crates/crate1/crate1_diffuse.png");
+		ImageData image = loadImage(L"butterfly.png");
 
 		using enum BufferUsage;
 		
@@ -92,7 +99,7 @@ namespace Smol
 	}
 
 	void EditorMainLoop::render() {
-		ClearColor clearColor{ 0, 0, 0, 1 };
+		ClearColor clearColor{ 0.5, 0.5, 0.5, 1 };
 
 		cmdList.begin();
 		cmdList.beginRenderPass(
