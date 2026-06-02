@@ -26,6 +26,7 @@
     <ClCompile Include="D3D11Sampler.cpp" />
     <ClCompile Include="D3D11Swapchain.cpp" />
     <ClCompile Include="D3D11Texture.cpp" />
+    <ClCompile Include="ImageLoader.cpp" />
     <ClCompile Include="OS.cpp" />
     <ClCompile Include="Util.cpp" />
   </ItemGroup>
@@ -39,9 +40,11 @@
     <ClInclude Include="D3D11Swapchain.hpp" />
     <ClInclude Include="D3D11Texture.hpp" />
     <ClInclude Include="fwd.hpp" />
+    <ClInclude Include="ImageLoader.hpp" />
     <ClInclude Include="INC_Windows.h" />
     <ClInclude Include="MainLoop.hpp" />
     <ClInclude Include="OS.hpp" />
+    <ClInclude Include="stb_image.h" />
     <ClInclude Include="Util.hpp" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
