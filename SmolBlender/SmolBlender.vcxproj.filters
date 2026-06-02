@@ -49,6 +49,12 @@
     <FxCompile Include="vs2.hlsl">
       <Filter>리소스 파일</Filter>
     </FxCompile>
+    <FxCompile Include="vs3.hlsl">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
+    <FxCompile Include="ps2.hlsl">
+      <Filter>리소스 파일</Filter>
+    </FxCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="crates\crate1\crate1_diffuse.png">

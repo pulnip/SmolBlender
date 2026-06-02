@@ -56,4 +56,41 @@ namespace Smol
 			.InstanceDataStepRate = 0
 		}
 	};
+
+	struct Vertex3 {
+		float position[2];
+		float uv[2];
+		// color for debugging
+		float color[4];
+	};
+
+	constexpr std::array VERTEX3_INPUT_LAYOUT = {
+		D3D11_INPUT_ELEMENT_DESC{
+			.SemanticName = "POSITION",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32_FLOAT, // float2 (8 bytes)
+			.InputSlot = 0,
+			.AlignedByteOffset = 0,
+			.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA,
+			.InstanceDataStepRate = 0
+		},
+		D3D11_INPUT_ELEMENT_DESC{
+			.SemanticName = "TEXCOORD",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32_FLOAT, // float2 (8 bytes)
+			.InputSlot = 0,
+			.AlignedByteOffset = 8,
+			.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA,
+			.InstanceDataStepRate = 0
+		},
+		D3D11_INPUT_ELEMENT_DESC{
+			.SemanticName = "COLOR",
+			.SemanticIndex = 0,
+			.Format = DXGI_FORMAT_R32G32B32A32_FLOAT, // float4 (16 bytes)
+			.InputSlot = 0,
+			.AlignedByteOffset = 16,
+			.InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA,
+			.InstanceDataStepRate = 0
+		}
+	};
 }

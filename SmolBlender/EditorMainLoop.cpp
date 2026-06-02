@@ -20,19 +20,19 @@ namespace Smol
 		rasterizerDesc.DepthClipEnable = FALSE;
 
 		pipeline = device.createPipelineState(GraphicsPipelineConfig{
-			.inputElementDescs = VERTEX1_INPUT_LAYOUT,
-			.vertexShaderPath = L"vs1.hlsl",
+			.inputElementDescs = VERTEX3_INPUT_LAYOUT,
+			.vertexShaderPath = L"vs3.hlsl",
 			.vertexShaderEntryPoint = "vs_main",
 			.rasterizerState = rasterizerDesc,
-			.pixelShaderPath = L"ps1.hlsl",
+			.pixelShaderPath = L"ps2.hlsl",
 			.pixelShaderEntryPoint = "ps_main"
 		});
 		
 		std::array vertices = {
-			Vertex1{.position = {-0.5f,  -0.5f}, .color = {1, 0, 0, 1}},
-			Vertex1{.position = {-0.5f,   0.5f}, .color = {0, 1, 0, 1}},
-			Vertex1{.position = { 0.5f,   0.5f}, .color = {1, 1, 1, 1}},
-			Vertex1{.position = { 0.5f,  -0.5f}, .color = {0, 0, 1, 1}},
+			Vertex3{.position = {-0.5f,  -0.5f}, .uv = {0, 1}, .color = {1, 0, 0, 1}},
+			Vertex3{.position = {-0.5f,   0.5f}, .uv = {0, 0}, .color = {0, 1, 0, 1}},
+			Vertex3{.position = { 0.5f,   0.5f}, .uv = {1, 0}, .color = {1, 1, 1, 1}},
+			Vertex3{.position = { 0.5f,  -0.5f}, .uv = {1, 1}, .color = {0, 0, 1, 1}},
 		};
 		// Notice! Clockwise for front face
 		std::array<uint16_t, 6> indices = {
@@ -46,7 +46,7 @@ namespace Smol
 		using enum BufferUsage;
 		
 		vertexBuffer = device.createBuffer(BufferConfig{
-			.size = sizeof(Vertex1) * vertices.size(),
+			.size = sizeof(Vertex3) * vertices.size(),
 			.usage = BufferUsage::VertexBuffer,
 			.initialData = vertices.data()
 		}, "Smol Vertex Buffer");
@@ -100,7 +100,7 @@ namespace Smol
 
 		cmdList.setConstantBuffer(constantBuffer, 0, ShaderStage::VertexShader);
 
-		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex1));
+		cmdList.setVertexBuffer(vertexBuffer, 0, sizeof(Vertex3));
 		cmdList.setIndexBuffer(indexBuffer, DXGI_FORMAT_R16_UINT);
 		cmdList.drawIndexed(numIndices);
 
